@@ -13,6 +13,13 @@
     <pr2_controller_interface plugin="${prefix}/controller_plugins.xml" />
   </export>
 
+  <rosdep name="omniORB4"/>
+
+  <rosdep name="dynamic-graph"/>
+  <rosdep name="dynamic-graph-corba"/>
+  <rosdep name="dynamic-graph-python"/>
+  <rosdep name="sot-core"/>
+
   <depend package="pr2_controller_interface"/>
   <depend package="pr2_mechanism_model"/>
 
