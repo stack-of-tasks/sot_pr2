@@ -14,6 +14,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("omniORB4 >= 4.1.1")
 
+ADD_REQUIRED_DEPENDENCY("jrl-mathtools")
+ADD_REQUIRED_DEPENDENCY("jrl-mal")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph-corba")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph-python")
