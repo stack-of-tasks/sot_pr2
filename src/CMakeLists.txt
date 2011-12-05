@@ -1,7 +1,8 @@
 INCLUDE(../cmake/python.cmake)
 
 FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
-  ADD_LIBRARY(${NAME} SHARED ${SOURCES})
+  #ADD_LIBRARY(${NAME} SHARED ${SOURCES})
+  rosbuild_add_library(${NAME} SHARED ${SOURCES})
   SET_TARGET_PROPERTIES(${NAME} PROPERTIES PREFIX "")
 
   PKG_CONFIG_USE_DEPENDENCY(${NAME} dynamic-graph)
@@ -25,19 +26,24 @@ FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
 ENDFUNCTION()
 
 # Compile dedicated dynamic plug-in.
-COMPILE_PLUGIN(dynamic dynamic.cpp Dynamic)
+COMPILE_PLUGIN(dynamic dynamic.cpp DynamicPr2)
+
+# Configure robot.py to search for pr2.urdf.
+EXEC_PROGRAM("rospack" ARGS "find pr2_mechanism_model"
+  OUTPUT_VARIABLE PR2_URDF_FILE)
+SET(PR2_URDF_FILE "${PR2_URDF_FILE}/pr2.urdf")
+
+CONFIG_FILES(dynamic_graph/sot/pr2/robot.py)
+
 
 # Configure prologue to embed robot model directory.
 CONFIG_FILES(dynamic_graph/sot/pr2/prologue.py)
 
-EXEC_PROGRAM(
-  ${PYTHON_EXECUTABLE}
-  ARGS
-  "-c \"from distutils import sysconfig; print sysconfig.get_python_lib(0,0,prefix='')\""
-  OUTPUT_VARIABLE PYTHON_SITELIB
-  )
+
+EXEC_PROGRAM(${PYTHON_EXECUTABLE} ARGS
+  "-c \"import sys, os; print os.sep.join(['lib', 'python' + sys.version[:3], 'site-packages'])\""
+  OUTPUT_VARIABLE PYTHON_SITELIB)
+
 PYTHON_INSTALL("dynamic_graph/sot/pr2" "__init__.py" "${PYTHON_SITELIB}")
-PYTHON_INSTALL("dynamic_graph/sot/pr2" "pr2.py" "${PYTHON_SITELIB}")
-PYTHON_INSTALL("dynamic_graph/sot/pr2" "prologue.py" "${PYTHON_SITELIB}")
-PYTHON_INSTALL("dynamic_graph/sot/pr2"
-  "${CMAKE_CURRENT_BINARY_DIR}/robot.py" "${PYTHON_SITELIB}")
+PYTHON_INSTALL_BUILD("dynamic_graph/sot/pr2" "robot.py" "${PYTHON_SITELIB}")
+PYTHON_INSTALL_BUILD("dynamic_graph/sot/pr2" "prologue.py" "${PYTHON_SITELIB}")
