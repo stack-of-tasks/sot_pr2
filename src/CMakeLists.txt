@@ -26,7 +26,7 @@ FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
 ENDFUNCTION()
 
 # Compile dedicated dynamic plug-in.
-COMPILE_PLUGIN(dynamic dynamic.cpp DynamicPr2)
+COMPILE_PLUGIN(dynamic-pr2 dynamic.cpp DynamicPr2)
 
 # Configure robot.py to search for pr2.urdf.
 EXEC_PROGRAM("rospack" ARGS "find pr2_mechanism_model"

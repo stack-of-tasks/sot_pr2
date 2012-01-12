@@ -1,5 +1,6 @@
 #ifndef SOT_PR2_DYNAMIC_HH
 # define SOT_PR2_DYNAMIC_HH
+# include <list>
 # include <string>
 
 # include <jrl/mal/boost.hh>
@@ -8,6 +9,7 @@
 namespace ml = maal::boost;
 
 # include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
+# include <abstract-robot-dynamics/joint.hh>
 # include <jrl/dynamics/dynamicsfactory.hh>
 
 # include <sot/core/flags.hh>
@@ -25,6 +27,7 @@ namespace sot
 
   namespace pr2
   {
+    using ::dynamicgraph::sot::MatrixHomogeneous;
     class Dynamic;
 
     namespace command
@@ -49,8 +52,19 @@ namespace sot
       virtual ~Dynamic();
 
       void load (const std::string& filename);
+
+    protected:
+      /// \brief Callback Computing the position of the body attached
+      /// to the provided joint.
+      ///
+      MatrixHomogeneous& 
+      computeBodyPosition (CjrlJoint* joint,
+			   MatrixHomogeneous& position,
+			   int t);
     private:
       CjrlHumanoidDynamicRobot* humanoidDynamicRobot_;
+
+      std::list< dg::SignalBase<int>* > genericSignalRefs_;
     };
   } // end of namespace pr2.
 } // end of namespace sot.

@@ -48,9 +48,8 @@ namespace sot_pr2
 	 it != robot->model_->robot_model_.joints_.end ();
 	 ++it)
       {
-	boost::shared_ptr<pr2_mechanism_model::JointState> state 
-	  (robot->getJointState (it->first));
-	jointsMap_[it->first] = std::make_pair(it->second, state);
+		boost::shared_ptr<pr2_mechanism_model::JointState> state(robot->getJointState (it->first));
+		jointsMap_[it->first] = std::make_pair(it->second, state);
       }
 
     // Call prologue.

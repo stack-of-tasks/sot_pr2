@@ -55,6 +55,40 @@ namespace sot
     Dynamic::load (const std::string& filename)
     {
       // load using jrl dynamics urdf.
+	  jrl::dynamics::urdf::Parser parser;
+      humanoidDynamicRobot_ = parser.parse(filename, "base_footprint_joint");
+
+      // iterate on tree nodes and add signals
+      typedef dg::SignalTimeDependent<MatrixHomogeneous, int> signal_t;
+      ::std::vector<CjrlJoint*> jointsVect = humanoidDynamicRobot_->jointVector();
+
+      for (uint i=0; i<jointsVect.size(); ++i)
+      {
+	    CjrlJoint* currentJoint = jointsVect[i];
+	    std::string signame = currentJoint->getName();
+
+ 		signal_t* sig
+	    = new signal_t
+	    (boost::bind
+	     (&Dynamic::computeBodyPosition, this, currentJoint, _1, _2),
+	     0,
+	     "sotDynamicPr2(" + getName () + ")::output(matrix)::" + signame);
+	    genericSignalRefs_.push_back (sig);
+	    signalRegistration (*sig);
+	  }
+    }
+
+    MatrixHomogeneous&
+    Dynamic::computeBodyPosition (CjrlJoint* joint,
+				  MatrixHomogeneous& position,
+				  int t)
+    {
+      // get the position of joint from jrl-dyn and put it into
+      // position.
+	  for(uint i=0; i<position.nbRows(); ++i)
+	    for(uint j=0; j<position.nbCols(); ++j)
+		  position.elementAt(i,j) = joint->initialPosition().m[i*4+j];
+      return position;
     }
 
     DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(Dynamic, "DynamicPr2");
