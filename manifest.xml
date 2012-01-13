@@ -1,7 +1,10 @@
 <package>
-  <description brief="sot_pr2">
+  <description brief="Dynamic graph PR-2 package">
 
-     sot_pr2
+    PR-2 real-time controller for dynamic-graph.
+
+    Gather dedicated dynamic-graph entities, humanoid robot python
+    classs definition and PR-2 real-time controller.
 
   </description>
   <author>Thomas Moulard</author>
