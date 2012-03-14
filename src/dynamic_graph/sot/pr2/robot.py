@@ -17,8 +17,6 @@
 from dynamic_graph.sot.dynamics.humanoid_robot import AbstractHumanoidRobot
 from dynamic_graph.ros import RosRobotModel
 
-pr2_urdf_file = "@PR2_URDF_FILE@"
-
 class Pr2(AbstractHumanoidRobot):
     """
     This class instanciates a Pr2 robot.
@@ -30,7 +28,7 @@ class Pr2(AbstractHumanoidRobot):
         AbstractHumanoidRobot.__init__ (self, name, tracer)
 
         self.dynamic = RosRobotModel("{0}_dynamic".format(name))
-        self.dynamic.load(pr2_urdf_file)
+        self.dynamic.load("package://pr2_mechanism_model/pr2.urdf")
 
         self.dimension = self.dynamic.getDimension()
         if self.dimension != len(self.halfSitting):
