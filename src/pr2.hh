@@ -2,7 +2,7 @@
 # define SOT_PR2_HH
 # include <sot/core/device.hh>
 
-# include <urdf/joint.h>
+# include <urdf_interface/joint.h>
 # include <pr2_controller_interface/controller.h>
 # include <pr2_mechanism_model/joint.h>
 
