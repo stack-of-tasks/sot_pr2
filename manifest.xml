@@ -30,5 +30,6 @@
   <depend package="urdf"/>
   <depend package="urdf_interface"/>
 
+  <depend package="dynamic_graph_bridge"/>
   <depend package="jrl_dynamics_urdf"/>
 </package>
