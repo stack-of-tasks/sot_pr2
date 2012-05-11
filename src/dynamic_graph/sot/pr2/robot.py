@@ -22,9 +22,14 @@ class Pr2(AbstractHumanoidRobot):
     This class instanciates a Pr2 robot.
     """
 
-    halfSitting = (0.) # FIXME:
+    OperationalPoints = []
 
-    def __init__(self, name, device, tracer = None):
+    tracedSignals = {
+        'dynamic': ["com", "zmp", "position", "velocity", "acceleration"],
+        'device': ['zmp', 'control', 'state']
+        }
+
+    def __init__(self, name, device = None, tracer = None):
         AbstractHumanoidRobot.__init__ (self, name, tracer)
         self.device = device
         self.dynamic = RosRobotModel("{0}_dynamic".format(name))
@@ -32,8 +37,8 @@ class Pr2(AbstractHumanoidRobot):
         #self.dynamic.loadUrdf("package://pr2_mechanism_model/pr2.urdf")
 
         self.dimension = self.dynamic.getDimension()
-        if self.dimension != len(self.halfSitting):
-            raise RuntimeError("invalid half-sitting pose")
+        self.halfSitting = (0.,) * self.dimension
+        print(self.halfSitting)
         self.initializeRobot()
 
 __all__ = [Pr2]
