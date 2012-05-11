@@ -14,8 +14,8 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-print("@PROJECT_NAME@ v@PROJECT_VERSION@")
-print("Compiled for robot @ROBOT@.")
+print("sot_pr2")
+print("Compiled for robot PR-2.")
 
 from dynamic_graph import plug
 from dynamic_graph.sot.pr2.robot import Pr2
@@ -27,7 +27,7 @@ from dynamic_graph.sot.dynamics.solver import Solver
 # 1. it does not provide the increment method
 # 2. it forwards the robot control to the OpenHRP
 #    controller.
-Device = PyEntityFactoryClass('Device')
+Device = PyEntityFactoryClass('Pr2')
 
 robot = Pr2(name = 'robot', device = Device('robot_device'))
 

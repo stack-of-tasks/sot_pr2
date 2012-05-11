@@ -24,11 +24,12 @@ class Pr2(AbstractHumanoidRobot):
 
     halfSitting = (0.) # FIXME:
 
-    def __init__(self, name, tracer = None):
+    def __init__(self, name, device, tracer = None):
         AbstractHumanoidRobot.__init__ (self, name, tracer)
-
+        self.device = device
         self.dynamic = RosRobotModel("{0}_dynamic".format(name))
-        self.dynamic.load("package://pr2_mechanism_model/pr2.urdf")
+        self.dynamic.loadFromParameterServer()
+        #self.dynamic.loadUrdf("package://pr2_mechanism_model/pr2.urdf")
 
         self.dimension = self.dynamic.getDimension()
         if self.dimension != len(self.halfSitting):
