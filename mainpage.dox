@@ -2,12 +2,7 @@
 \mainpage
 \htmlinclude manifest.html
 
-\b sot_pr2 is ... 
-
-<!-- 
-Provide an overview of your package.
--->
-
+\b sot_pr2 is a PR-2 controller embedding dynamic-graph.
 
 \section codeapi Code API
 
