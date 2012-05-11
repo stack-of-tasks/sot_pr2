@@ -17,10 +17,7 @@
     <rosdoc config="rosdoc.yaml" />
   </export>
 
-  <rosdep name="omniORB4"/>
-
   <rosdep name="dynamic-graph"/>
-  <rosdep name="dynamic-graph-corba"/>
   <rosdep name="dynamic-graph-python"/>
   <rosdep name="sot-core"/>
   <rosdep name="sot-dynamic"/>

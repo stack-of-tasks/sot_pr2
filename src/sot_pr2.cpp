@@ -1,6 +1,10 @@
+#include <strings.h>
+#include <Python.h>
+
 #include "pr2.hh"
 #include "sot_pr2.hh"
 #include <pluginlib/class_list_macros.h>
+#include <dynamic_graph_bridge/ros_init.hh>
 
 const std::string SOT_OPENHRP_OUTPUT_FILE ("/tmp/sot.out");
 
@@ -9,18 +13,18 @@ namespace sot_pr2
   static void
   runPython (std::ostream& file,
 	     const std::string& command,
-	     dynamicgraph::corba::Interpreter& interpreter)
+	     ::dynamicgraph::Interpreter& interpreter)
   {
     file << ">>> " << command << std::endl;
-    std::string value = interpreter.python (command);
+    std::string value = interpreter.runCommand (command);
     if (value != "None")
       file << value;
   }
 
   SotPr2::SotPr2()
     : pr2_controller_interface::Controller (),
+      interpreter_ (dynamicgraph::rosInit (false)),
       jointsMap_ (),
-      interpreter_ (),
       entity_ (new Pr2 ("robot_device"))
   {}
       
@@ -69,7 +73,11 @@ namespace sot_pr2
 	  (aof,
 	   "from dynamic_graph.sot.pr2.prologue import robot, solver",
 	   interpreter_);
-	interpreter_.startCorbaServer ("pr2", "", "stackOfTasks", "");
+	// Calling again rosInit here to start the spinner. It will
+	// deal with topics and services callbacks in a separate, non
+	// real-time thread. See roscpp documentation for more
+	// information.
+	dynamicgraph::rosInit (true);
       }
     catch(const std::exception& e)
       {

@@ -3,7 +3,7 @@
 # include <pr2_controller_interface/controller.h>
 # include <pr2_mechanism_model/joint.h>
 
-# include <dynamic-graph/corba/interpreter.hh>
+# include <dynamic_graph_bridge/ros_interpreter.hh>
 # include "pr2.hh"
 
 # include <sot/core/device.hh>
@@ -13,9 +13,9 @@ namespace sot_pr2
   class SotPr2 : public pr2_controller_interface::Controller
   {
   private:
+    /// Embedded python interpreter accessible via a ROS service.
+    dynamicgraph::Interpreter interpreter_;
     jointMap_t jointsMap_;
-    /// Embedded python interpreter accessible via Corba
-    dynamicgraph::corba::Interpreter interpreter_;
     /// Pointer to Entity StackOfTasks
     Pr2* entity_;
   public:
