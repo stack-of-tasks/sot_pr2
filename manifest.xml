@@ -24,6 +24,7 @@
 
   <depend package="pr2_controller_interface"/>
   <depend package="pr2_mechanism_model"/>
+  <depend package="control_toolbox"/>
 
   <depend package="urdf"/>
   <depend package="urdf_interface"/>

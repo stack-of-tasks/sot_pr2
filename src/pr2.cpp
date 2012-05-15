@@ -20,14 +20,42 @@ Pr2::Pr2 (const std::string& entityName)
   : dynamicgraph::sot::Device (entityName),
     timestep_ (TIMESTEP_DEFAULT),
     previousState_ (),
-    robotState_ ("Pr2(" + entityName + ")::output(vector)::robotState")
+    robotState_ ("Pr2(" + entityName + ")::output(vector)::robotState"),
+    pids_ (),
+    torqueControl_ (false)
 {
   signalRegistration (robotState_);
 }
 
 bool
+Pr2::init (ros::NodeHandle& nh, jointMap_t& jointMap)
+{
+  // If PID used, reset it.
+  if (!torqueControl_)
+    for (jointMap_t::iterator it = jointMap.begin ();
+	 it != jointMap.end (); ++it)
+      {
+	boost::shared_ptr<control_toolbox::Pid> pid =
+	  boost::make_shared<control_toolbox::Pid> ();
+	if (!pid->init (ros::NodeHandle (nh, "pid_parameters")))
+	  {
+	    ROS_ERROR ("failed to construct PID controller");
+	    return false;
+	  }
+	pid->reset ();
+	pids_.push_back (pid);
+      }
+  return true;
+}
+
+bool
 Pr2::setup (jointMap_t& jointMap)
 {
+  // Reset PID if necessary.
+  for (unsigned i = 0; i < pids_.size (); ++i)
+    if (pids_[i])
+      pids_[i]->reset ();
+
   // Read state from motor command
   int t = stateSOUT.getTime () + 1;
   maal::boost::Vector state = stateSOUT.access (t);
@@ -40,7 +68,12 @@ Pr2::setup (jointMap_t& jointMap)
   for (jointMap_t::const_iterator it = jointMap.begin ();
        it != jointMap.end ();
        ++it, ++jointId)
-    state (jointId + 6) = it->second.second->measured_effort_;
+    {
+      if (jointId + 6 >= state.size ()
+	  || !it->second.second)
+	continue;
+      state (jointId + 6) = it->second.second->position_;
+    }
 
   previousState_ = state;
   stateSOUT.setConstant (state);
@@ -53,18 +86,43 @@ void
 Pr2::control (jointMap_t& jointMap)
 {
   // Integrate control
-  increment (timestep_);
+  try
+    {
+      increment (timestep_);
+    }
+  catch (...)
+    {}
   sotDEBUG (25) << "state = " << state_ << std::endl;
   sotDEBUG (25) << "diff  = " << state_ - previousState_ << std::endl;
-  previousState_ = state_;
 
   // Write new state into motor command.
-  unsigned jointId = 6;
-  for (jointMap_t::iterator it = jointMap.begin ();
-       it != jointMap.end ();
-       ++it, ++jointId)
-    it->second.second->commanded_effort_ = state_ (jointId - 6);
+  unsigned jointId = 0;
+  if (!pids_.empty ())
+    for (jointMap_t::iterator it = jointMap.begin ();
+	 it != jointMap.end ();
+	 ++it, ++jointId)
+      {
+	if (jointId + 6 >= state_.size ()
+	    || jointId + 6 >= previousState_.size ()
+	    || !it->second.second)
+	  continue;
+	it->second.second->commanded_effort_ =
+	  pids_[jointId]->updatePid
+	  (previousState_ (jointId + 6) - state_ (jointId + 6),
+	   ros::Duration (timestep_));
+      }
+  else
+    for (jointMap_t::iterator it = jointMap.begin ();
+	 it != jointMap.end ();
+	 ++it, ++jointId)
+      {
+	if (jointId + 6 >= state_.size ()
+	    || jointId + 6 >= previousState_.size ())
+	  continue;
+	it->second.second->commanded_effort_ = state_ (jointId + 6);
+      }
 
+  previousState_ = state_;
   updateRobotState (jointMap);
 }
 
@@ -78,7 +136,12 @@ Pr2::updateRobotState (jointMap_t& jointMap)
   for (jointMap_t::const_iterator it = jointMap.begin ();
        it != jointMap.end ();
        ++it, ++jointId)
-    robotState (jointId + 6) = it->second.second->commanded_effort_;
+    {
+      if (jointId + 6 >= robotState.size ()
+	  || !it->second.second)
+	continue;
+      robotState (jointId + 6) = it->second.second->position_;
+    }
   robotState_.setConstant(robotState);
 }
 

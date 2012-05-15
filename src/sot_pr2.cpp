@@ -27,7 +27,7 @@ namespace sot_pr2
       jointsMap_ (),
       entity_ (new Pr2 ("robot_device"))
   {}
-      
+
 
   /// Controller initialization in non-realtime
   bool SotPr2::init(pr2_mechanism_model::RobotState* robot,
@@ -52,8 +52,16 @@ namespace sot_pr2
 	 it != robot->model_->robot_model_.joints_.end ();
 	 ++it)
       {
-		boost::shared_ptr<pr2_mechanism_model::JointState> state(robot->getJointState (it->first));
+		boost::shared_ptr<pr2_mechanism_model::JointState> state
+		  (robot->getJointState (it->first));
 		jointsMap_[it->first] = std::make_pair(it->second, state);
+      }
+
+    // Initialize device entity.
+    if (!entity_->init (n, jointsMap_))
+      {
+	ROS_ERROR_STREAM("entity failed to initialize");
+	return false;
       }
 
     // Call prologue.

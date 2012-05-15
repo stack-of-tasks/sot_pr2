@@ -41,4 +41,4 @@ class Pr2(AbstractHumanoidRobot):
         print(self.halfSitting)
         self.initializeRobot()
 
-__all__ = [Pr2]
+__all__ = ["Pr2"]

@@ -5,7 +5,7 @@
 # include <urdf_interface/joint.h>
 # include <pr2_controller_interface/controller.h>
 # include <pr2_mechanism_model/joint.h>
-
+# include <control_toolbox/pid.h>
 
 namespace sot_pr2
 {
@@ -28,6 +28,9 @@ namespace sot_pr2
     /// \name Inherited control methods.
     /// \{
 
+    /// \brief Non real-time entity start.
+    virtual bool init (ros::NodeHandle& nh, jointMap_t& jointMap);
+
     /// \brief Called when plug-in is started.
     virtual bool setup (jointMap_t& jointMap);
 
@@ -49,6 +52,8 @@ namespace sot_pr2
     double timestep_;
     ml::Vector previousState_;
     dynamicgraph::Signal<ml::Vector, int> robotState_;
+    std::vector<boost::shared_ptr<control_toolbox::Pid> > pids_;
+    bool torqueControl_;
   };
 } // end of namespace sot_pr2
 

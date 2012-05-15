@@ -1,0 +1,7 @@
+sot_pr2:
+  type: sot_pr2/SotPr2Plugin
+  pid_parameters:
+    p: 10.0
+    i: 0.0
+    d: 0.0
+    i_clamp: 0.0
