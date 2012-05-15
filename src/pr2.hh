@@ -29,7 +29,9 @@ namespace sot_pr2
     /// \{
 
     /// \brief Non real-time entity start.
-    virtual bool init (ros::NodeHandle& nh, jointMap_t& jointMap);
+    virtual bool init (ros::NodeHandle& nh,
+		       pr2_mechanism_model::RobotState* robot,
+		       jointMap_t& jointMap);
 
     /// \brief Called when plug-in is started.
     virtual bool setup (jointMap_t& jointMap);
@@ -54,6 +56,8 @@ namespace sot_pr2
     dynamicgraph::Signal<ml::Vector, int> robotState_;
     std::vector<boost::shared_ptr<control_toolbox::Pid> > pids_;
     bool torqueControl_;
+    ros::Time lastTime_;
+    pr2_mechanism_model::RobotState* robot_;
   };
 } // end of namespace sot_pr2
 

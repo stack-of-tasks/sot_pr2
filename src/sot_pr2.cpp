@@ -58,7 +58,7 @@ namespace sot_pr2
       }
 
     // Initialize device entity.
-    if (!entity_->init (n, jointsMap_))
+    if (!entity_->init (n, robot, jointsMap_))
       {
 	ROS_ERROR_STREAM("entity failed to initialize");
 	return false;
@@ -67,9 +67,12 @@ namespace sot_pr2
     // Call prologue.
     try
       {
+	std::string pythonpath;
+	n.getParam ("python_path", pythonpath);
+
 	std::ofstream aof (SOT_OPENHRP_OUTPUT_FILE.c_str ());
 	runPython (aof, "import sys, os", interpreter_);
-	runPython (aof, "pythonpath = os.environ['PYTHONPATH']", interpreter_);
+	runPython (aof, "pythonpath = '" + pythonpath + "'", interpreter_);
 	runPython (aof, "path = []", interpreter_);
 	runPython (aof,
 		   "for p in pythonpath.split(':'):\n"

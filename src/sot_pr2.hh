@@ -21,7 +21,7 @@ namespace sot_pr2
   public:
     explicit SotPr2();
 
-    virtual bool init(pr2_mechanism_model::RobotState *robot,
+    virtual bool init(pr2_mechanism_model::RobotState* robot,
 		      ros::NodeHandle &n);
     virtual void starting();
     virtual void update();

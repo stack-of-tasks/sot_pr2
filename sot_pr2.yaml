@@ -5,3 +5,5 @@ sot_pr2:
     i: 0.0
     d: 0.0
     i_clamp: 0.0
+  torque_control: false
+  python_path: "" #FIXME: add your own path here.

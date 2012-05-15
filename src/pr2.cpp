@@ -22,14 +22,22 @@ Pr2::Pr2 (const std::string& entityName)
     previousState_ (),
     robotState_ ("Pr2(" + entityName + ")::output(vector)::robotState"),
     pids_ (),
-    torqueControl_ (false)
+    torqueControl_ (false),
+    lastTime_ ()
 {
   signalRegistration (robotState_);
 }
 
 bool
-Pr2::init (ros::NodeHandle& nh, jointMap_t& jointMap)
+Pr2::init (ros::NodeHandle& nh,
+	   pr2_mechanism_model::RobotState* robot,
+	   jointMap_t& jointMap)
 {
+  robot_ = robot;
+
+  // Retrieve parameters.
+  ros::param::param<bool> ("~torque_control", torqueControl_, false);
+
   // If PID used, reset it.
   if (!torqueControl_)
     for (jointMap_t::iterator it = jointMap.begin ();
@@ -55,6 +63,8 @@ Pr2::setup (jointMap_t& jointMap)
   for (unsigned i = 0; i < pids_.size (); ++i)
     if (pids_[i])
       pids_[i]->reset ();
+
+  lastTime_ = robot_->getTime ();
 
   // Read state from motor command
   int t = stateSOUT.getTime () + 1;
@@ -102,6 +112,8 @@ Pr2::control (jointMap_t& jointMap)
 	 it != jointMap.end ();
 	 ++it, ++jointId)
       {
+	ros::Duration dt = robot_->getTime () - lastTime_;
+	lastTime_ = robot_->getTime ();
 	if (jointId + 6 >= state_.size ()
 	    || jointId + 6 >= previousState_.size ()
 	    || !it->second.second)
@@ -109,7 +121,7 @@ Pr2::control (jointMap_t& jointMap)
 	it->second.second->commanded_effort_ =
 	  pids_[jointId]->updatePid
 	  (previousState_ (jointId + 6) - state_ (jointId + 6),
-	   ros::Duration (timestep_));
+	   dt);
       }
   else
     for (jointMap_t::iterator it = jointMap.begin ();
