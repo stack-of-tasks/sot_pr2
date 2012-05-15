@@ -31,6 +31,9 @@ Device = PyEntityFactoryClass('Pr2')
 
 robot = Pr2(name = 'robot', device = Device('robot_device'))
 
+# FIXME: this must be set so that the graph can be evaluated.
+robot.device.zmp.value = (0., 0., 0.)
+
 # Create a solver.
 solver = Solver(robot)
 
