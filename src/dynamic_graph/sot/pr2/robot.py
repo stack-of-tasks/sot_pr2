@@ -24,16 +24,27 @@ class Pr2(AbstractRobot):
     """
 
     OperationalPoints = ['right-wrist','left-wrist','waist','gaze']
+    
+    SpecialLinks  = ['BODY', 'l_wrist', 'r_wrist', 'l_gripper', 'r_gripper', 'gaze']
+    SpecialNames = ['base_link', 'l_wrist_roll_link', 'r_wrist_roll_link', 'l_gripper_palm_link', 'r_gripper_palm_link', 'head_tilt_link']
 
     tracedSignals = {
         'dynamic': ["com", "position", "velocity", "acceleration"],
         'device': ['control', 'state']
         }
+        
+    def specifySpecialLinks(self):
+        if len(self.SpecialLinks) == len(self.SpecialNames):
+            for i in range(0,len(self.SpecialLinks)):
+                self.dynamic.addJointMapping(self.SpecialLinks[i], self.SpecialNames[i])
+        else:
+            print 'No Special joints added : SpecialLinks.size != SpecialJoints.size'
 
     def __init__(self, name, device = None, tracer = None):
         AbstractRobot.__init__ (self, name, tracer)
         self.device = device
         self.dynamic = RosSotRobotModel("{0}_dynamic".format(name))
+        self.specifySpecialLinks()
         self.dynamic.loadFromParameterServer()
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = (0.,) * self.dimension
