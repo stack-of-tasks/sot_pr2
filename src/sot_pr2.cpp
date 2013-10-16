@@ -131,5 +131,5 @@ namespace sot_pr2
 
 /// Register controller to pluginlib
 PLUGINLIB_DECLARE_CLASS(sot_pr2,SotPr2Plugin,
-			sot_pr2::SotPr2,
-			pr2_controller_interface::Controller)
+                        sot_pr2::SotPr2,
+                        pr2_controller_interface::Controller)
