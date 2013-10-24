@@ -65,7 +65,7 @@ Pr2handMgrip[0:3,3] = (0.18,0,0)
 
 def Pr2RightHandTask(robot):
     task=MetaTaskKine6d('rh',robot.dynamic,'rh','right-wrist')
-    #task.opmodif = matrixToTuple(Pr2handMgrip)
+    task.opmodif = matrixToTuple(Pr2handMgrip)
     task.feature.frame('desired')
     return task
     
