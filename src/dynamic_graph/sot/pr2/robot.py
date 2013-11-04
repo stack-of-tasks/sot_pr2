@@ -15,10 +15,11 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-from dynamic_graph.sot.dynamics.abstract_robot import AbstractRobot
+#from dynamic_graph.sot.dynamics.abstract_robot import AbstractRobot
+from dynamic_graph.sot.dynamics.humanoid_robot import AbstractHumanoidRobot
 from dynamic_graph.ros.ros_sot_robot_model import RosSotRobotModel
 
-class Pr2(AbstractRobot):
+class Pr2(AbstractHumanoidRobot):
     """
     This class instanciates a Pr2 robot.
     """
@@ -41,7 +42,7 @@ class Pr2(AbstractRobot):
             print 'No Special joints added : SpecialLinks.size != SpecialJoints.size'
 
     def __init__(self, name, device = None, tracer = None):
-        AbstractRobot.__init__ (self, name, tracer)
+        AbstractHumanoidRobot.__init__ (self, name, tracer)
         self.device = device
         self.dynamic = RosSotRobotModel("{0}_dynamic".format(name))
         self.specifySpecialLinks()
