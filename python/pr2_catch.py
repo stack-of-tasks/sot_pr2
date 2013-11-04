@@ -43,8 +43,8 @@ solver.push(taskRH.task)
 solver.push(contactBase.task)
 
 # Main loop
+dt=3e-3
 from dynamic_graph.sot.core.utils.thread_interruptible_loop import loopInThread,loopShortcuts
-dt=1e-3
 @loopInThread
 def inc():
     robot.device.increment(dt)

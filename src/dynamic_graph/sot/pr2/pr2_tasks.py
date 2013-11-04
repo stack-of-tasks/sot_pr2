@@ -134,7 +134,21 @@ def Pr2FixedContactTask(robot):
     return task
 
 
+# -- WAIST  ------------------------------------------------------------------ 
+
+baseMground=eye(4);
+baseMground[0:3,3] = (0,0,-0.051)
+
+def Pr2BaseTask(robot):
+    task = MetaTaskKine6d('base',robot.dynamic,'waist','waist')
+    task.opmodif = matrixToTuple(baseMground)
+    task.feature.frame('desired')
+    task.feature.selec.value = '011100'
+    task.gain.setConstant(10)
+    return task
+
     
 __all__ = ["SotPr2", "Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
            "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask", "toList",
-           "Pr2FixedContactTask", "initPr2RosSimuProblem", "push", "pop"]
+           "Pr2FixedContactTask", "initPr2RosSimuProblem", "push", "pop",
+           "Pr2BaseTask"]
