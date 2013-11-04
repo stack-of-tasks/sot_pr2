@@ -1,4 +1,4 @@
-from numpy import eye
+from numpy import eye, array
 from dynamic_graph import plug
 from dynamic_graph.sot.core import *
 from dynamic_graph.sot.dynamics import *
@@ -78,7 +78,7 @@ def Pr2LeftHandTask(robot):
 
 # -- CAMS  ------------------------------------------------------------------
 
-Pr2headMcam = eye(4)
+Pr2headMcam = array([[0.0,0.0,1.0,0.0],[1.,0.0,0.0,0.0],[0.0,1.,0.0,0.0],[0.0,0.0,0.0,1.0]])
     
 def Pr2GazeTask(robot):
     task = MetaTaskVisualPoint('gaze',robot.dynamic,'head','gaze')
