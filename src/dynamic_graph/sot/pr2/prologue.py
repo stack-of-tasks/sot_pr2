@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright 2013, Benjamin Coudrin, LIRMM, LAAS, CNRS
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 #
 # This file is part of dynamic-graph.
@@ -18,36 +19,29 @@ print("sot_pr2")
 print("Compiled for robot PR-2.")
 
 from dynamic_graph import plug
-from dynamic_graph.sot.pr2.robot import Pr2
+from robot import Pr2
 from dynamic_graph.entity import PyEntityFactoryClass
-from dynamic_graph.sot.dynamics.solver import Solver
 
-# Create the OpenHRP enabled device.
-# This entity behaves exactly like robotsimu except:
-# 1. it does not provide the increment method
-# 2. it forwards the robot control to the OpenHRP
-#    controller.
-Device = PyEntityFactoryClass('Pr2')
+Device = PyEntityFactoryClass('Pr2Device')
 
 robot = Pr2(name = 'robot', device = Device('robot_device'))
 
 # FIXME: this must be set so that the graph can be evaluated.
-robot.device.zmp.value = (0., 0., 0.)
+#robot.device.zmp.value = (0., 0., 0.)
 
 # Create a solver.
-solver = Solver(robot)
+from dynamic_graph.sot.dyninv import SolverKine
+def toList(solver):
+    return map(lambda x: x[1:-1],solver.dispStack().split('|')[1:])
+SolverKine.toList = toList
+solver = SolverKine('sot')
+solver.setSize(robot.dimension)
+robot.device.control.unplug()
+plug(solver.control,robot.device.control)
+plug(robot.device.state,robot.dynamic.position)
 
 print("Prologue ran successfully.")
 
 # Make sure only robot and solver are visible from the outside.
 __all__ = ["robot", "solver"]
 
-
-####################################
-#        --- IMPORTANT ---         #
-#                                  #
-# THIS FILE MUST NEVER BE CHANGED. #
-# TO RUN YOUR EXPERIMENT, PLEASE   #
-# WRITE A SEPARATE PYTHON MODULE   #
-# AND LAUNCH IT USING dg-remote!   #
-####################################

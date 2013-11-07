@@ -27,8 +27,19 @@ FINDPYTHON()
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PYTHON_LIBRARY_DIRS})
 
+set(SOURCES
+    src/pr2_sot_controller.cpp
+    src/pr2_device.cpp)
 
-rosbuild_add_library(sot_pr2 src/sot_pr2.cpp src/pr2.cpp)
+set(HEADERS
+    include/sot_pr2/pr2_sot_controller.h
+    include/sot_pr2/pr2_device.h)
+
+rosbuild_add_library(sot_pr2 ${HEADERS} ${SOURCES})
+
+target_link_libraries(sot_pr2 dynamic-graph)
+target_link_libraries(sot_pr2 sot-core)
+target_link_libraries(sot_pr2 dynamic-graph-python)
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "sot-core")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph-python")

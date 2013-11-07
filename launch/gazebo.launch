@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+
+    <node name="rqt_console" pkg="rqt_console" type="rqt_console" />
+
+    <!-- Startup PR2 without any mechanism controllers -->
+    <include file="$(find pr2_gazebo)/launch/pr2_no_controllers.launch" />
+</launch>

@@ -1,5 +1,5 @@
 <library path="lib/libsot_pr2">
-  <class name="sot_pr2/SotPr2Plugin"
-         type="sot_pr2::SotPr2"
+  <class name="sot_pr2/Pr2SotControllerPlugin"
+         type="sot_pr2::Pr2SotController"
          base_class_type="pr2_controller_interface::Controller" />
 </library>
