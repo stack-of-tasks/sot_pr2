@@ -8,9 +8,10 @@ const std::string Pr2SotController::LOG_PYTHON="/tmp/pr2_sot_controller.out";
 
 Pr2SotController::Pr2SotController()
 : pr2_controller_interface::Controller(),
-  interpreter_(dynamicgraph::rosInit(false)),
+  device_(new Pr2Device("robot_device")),
   joint_map_(),
-  device_(new Pr2Device("robot_device")) {
+  interpreter_(dynamicgraph::rosInit(false))
+{
 }
 
 void Pr2SotController::runPython(std::ostream& file, const std::string& command)
