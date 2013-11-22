@@ -46,6 +46,7 @@ class Pr2(AbstractHumanoidRobot):
         self.device = device
         self.dynamic = RosRobotModel("{0}_dynamic".format(name))
         self.specifySpecialLinks()
+        #Note: the param 'robot_description' should be defined before the next instruction
         self.dynamic.loadFromParameterServer()
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = (0.,) * self.dimension
