@@ -47,3 +47,4 @@ PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "sot-core")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph-python")
 
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(python)
