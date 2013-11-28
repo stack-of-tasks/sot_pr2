@@ -57,6 +57,13 @@ def initPr2RosSimuProblem():
     [robot,sot] = initializePr2(robot,sot)
     return [robot,ros,sot]
     
+def initPr2RosProblem():
+    plug(robot.device.state, robot.dynamic.position)
+    ros = Ros(robot)
+    sot = SotPr2(robot)
+    [robot,sot] = initializePr2(robot,sot)
+    return [robot,ros,sot]
+    
 
 # -- HANDS ------------------------------------------------------------------
     

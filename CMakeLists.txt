@@ -28,10 +28,12 @@ INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PYTHON_LIBRARY_DIRS})
 
 set(SOURCES
+    src/pr2_controller_plugin.cpp
     src/pr2_sot_controller.cpp
     src/pr2_device.cpp)
 
 set(HEADERS
+    include/sot_pr2/pr2_controller_plugin.h
     include/sot_pr2/pr2_sot_controller.h
     include/sot_pr2/pr2_device.h)
 

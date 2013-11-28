@@ -27,7 +27,8 @@ class Pr2(AbstractHumanoidRobot):
     OperationalPoints = ['right-wrist','left-wrist','waist','gaze','chest','left-ankle']
     
     SpecialLinks  = ['BODY', 'l_wrist', 'r_wrist', 'l_gripper', 'r_gripper', 'gaze','torso','l_ankle']
-    SpecialNames = ['base_link', 'l_wrist_roll_link', 'r_wrist_roll_link', 'l_gripper_palm_link', 'r_gripper_palm_link', 'double_stereo_link','torso_lift_link','base_link']
+    #SpecialNames = ['base_link', 'l_wrist_roll_link', 'r_wrist_roll_link', 'l_gripper_palm_link', 'r_gripper_palm_link', 'double_stereo_link','torso_lift_link','base_link']
+    SpecialNames = ['base_link', 'l_wrist_roll_link', 'base_link', 'l_gripper_palm_link', 'r_gripper_palm_link', 'double_stereo_link','torso_lift_link','base_link']
 
     tracedSignals = {
         'dynamic': ["com", "position", "velocity", "acceleration"],
