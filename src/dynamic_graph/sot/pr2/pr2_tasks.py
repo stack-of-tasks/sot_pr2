@@ -158,4 +158,4 @@ def Pr2BaseTask(robot):
 __all__ = ["SotPr2", "Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
            "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask", "toList",
            "Pr2FixedContactTask", "initPr2RosSimuProblem", "push", "pop",
-           "Pr2BaseTask"]
+           "Pr2BaseTask", "initPr2RosProblem"]

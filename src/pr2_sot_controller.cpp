@@ -19,7 +19,7 @@ bool data_ready;
 
 void
 workThread(Pr2SotController *actl) {
-    dynamicgraph::Interpreter aLocalInterpreter(dynamicgraph::rosInit(false,true));
+    dynamicgraph::Interpreter aLocalInterpreter(actl->node_);
     actl->interpreter_ = boost::make_shared<dynamicgraph::Interpreter>(aLocalInterpreter);
 
     std::cout << "Going through the thread." << std::endl;
@@ -32,7 +32,8 @@ workThread(Pr2SotController *actl) {
 }
 
 Pr2SotController::Pr2SotController(std::string name)
-: device_(name) {
+: device_(name),
+  node_(dynamicgraph::rosInit(false,true)) {
     std::cout << "Going through Pr2SotController." << std::endl;
     boost::thread thr(workThread,this);
     LOG_TRACE("");

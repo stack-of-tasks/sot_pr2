@@ -79,8 +79,10 @@ Pr2Device::getControl(ControlMap &controlOut) {
     anglesOut.resize(state_.size());
 
     try { increment(timestep_); }
-    catch (...) {std::cout << "Increment error (" << loop_count_ << ") (" << controlSIN << ")" << std::endl;}
-     ++loop_count_;
+    catch (...) {
+        //std::cout << "Increment error (" << loop_count_ << ") (" << controlSIN << ")" << std::endl;
+    }
+     //++loop_count_;
 
     sotDEBUG(25) << "state = " << state_ << std::endl;
     sotDEBUG(25) << "diff = " << ((previous_state_.size() == state_.size()) ?

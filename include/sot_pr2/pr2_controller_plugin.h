@@ -8,6 +8,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <realtime_tools/realtime_publisher.h>
 #include <control_msgs/JointTrajectoryControllerState.h>
+#include <tf/transform_listener.h>
 
 namespace sot_pr2 {
 
@@ -48,10 +49,14 @@ private:
     pr2_mechanism_model::RobotState *robot_;
 
     // ROS interface
-    ros::NodeHandle node_;
+    //ros::NodeHandle node_;
     boost::scoped_ptr<
         realtime_tools::RealtimePublisher<
             control_msgs::JointTrajectoryControllerState> > controller_state_publisher_;
+
+    ros::Publisher cmd_vel_pub_;
+
+    tf::TransformListener listener_;
 
     double timeFromStart_;
 };

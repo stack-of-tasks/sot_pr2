@@ -23,6 +23,7 @@ public:
     void getControl(ControlMap &controlOut);
 
     boost::shared_ptr<dynamicgraph::Interpreter> interpreter_;
+    ros::NodeHandle node_;
 
 protected:
     void updateRobotState(std::vector<double> &anglesIn);
