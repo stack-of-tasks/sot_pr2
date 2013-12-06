@@ -15,6 +15,6 @@
     <node name="pr2_base_controllers_spawner" pkg="pr2_controller_manager" type="spawner" output="screen"
         args="--wait-for=/calibrated base_controller base_odometry" />
 
-<!--    <include file="$(find sot_pr2)/launch/spawn_pr2_controller.launch" />-->
+    <include file="$(find sot_pr2)/launch/spawn_pr2_controller.launch" />
 
 </launch>

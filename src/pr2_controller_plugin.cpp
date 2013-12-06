@@ -86,6 +86,7 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
     // Allocate space
     const unsigned int jsz = joints_.size();
     joint_encoder_.resize(jsz);
+    joint_velocity_.resize(jsz);
     joint_control_.resize(jsz);
     error_raw.resize(jsz);
     error.resize(jsz);
@@ -127,8 +128,11 @@ Pr2ControllerPlugin::readControl() {
 
     // Update command
     joint_control_ = controlValues_["joints"].getValues();
-    for (unsigned int i=0; i<joints_.size(); ++i) {
-        error_raw[i] = joints_[i]->position_ - joint_control_[i];
+    joint_velocity_ = controlValues_["velocities"].getValues();
+    // 0-11 are casters and are commanded by base controller
+    for (unsigned int i=12; i<joints_.size(); ++i) {
+        error[i] = joints_[i]->position_ - joint_control_[i];
+        /*error_raw[i] = joints_[i]->position_ - joint_control_[i];
         if(error_raw[i] < -3.14159){
             error[i] = error_raw[i] + 3.14159*2;
         } else {
@@ -137,37 +141,20 @@ Pr2ControllerPlugin::readControl() {
             } else {
                 error[i] = error_raw[i];
             }
-        }
-        joints_[i]->commanded_effort_ += pids_[i].updatePid(error[i], dt);
+        }*/
+        double errord = joints_[i]->velocity_ - joint_velocity_[i];
+        joints_[i]->commanded_effort_ += pids_[i].updatePid(error[i], errord, dt);
     }
-
-    // Get Odometry
-    tf::StampedTransform current_transform;
-    listener_.lookupTransform("base_footprint", "odom_combined", ros::Time(0), current_transform);
-    tf::Vector3 xyz = current_transform.getOrigin();
-    tf::Quaternion q = current_transform.getRotation();
-    std::cout << "Current pos : " << std::endl
-              << xyz[0] << ", "  << xyz[1] << ", " << xyz[2] << std::endl
-              << q.x() << ", " << q.y() << ", " << q.z() << ", " << q.w() << std::endl;
-    double curr_yaw = std::atan2(2*(q.w()*q.z() + q.x()*q.y()), 1 - 2*(q.y()*q.y() + q.z()*q.z()));
-    std::cout << "yaw = " << curr_yaw << std::endl;
 
     // Base controller
     geometry_msgs::Twist base_cmd;
-    std::vector<double> baseff = controlValues_["baseff"].getValues();
-    double yaw = std::atan2(baseff[4],baseff[0]);
-    double pitch = std::atan2(-baseff[8],std::sqrt(baseff[9]*baseff[9] + baseff[10]*baseff[10]));
-    double roll = std::atan2(baseff[9],baseff[10]);
-    std::cout << "baseff = [" << baseff[3] << ", " << baseff[7] << ", " << baseff[11] << ", "
-                              << roll << ", " << pitch << ", " << yaw << "]" << std::endl;
+    std::vector<double> vel = controlValues_["ffvelocity"].getValues();
     base_cmd.linear.x = base_cmd.linear.y = base_cmd.linear.z = 0;
     base_cmd.angular.x = base_cmd.angular.y = base_cmd.angular.z = 0;
-    base_cmd.linear.x = 1.0 * (baseff[3] - xyz[0]);
-    base_cmd.linear.y = 1.0 * (baseff[7] - xyz[1]);
-    base_cmd.angular.z = 1.0 * (yaw - curr_yaw);
+    base_cmd.linear.x = vel[0];
+    base_cmd.linear.y = vel[1];
+    base_cmd.angular.z = vel[5];
     cmd_vel_pub_.publish(base_cmd);
-
-    logout << xyz[0] << "\t" << baseff[3] << "\t" << base_cmd.linear.x << std::endl;
 
     // State publishing
     if (loop_count_ % 10 == 0) {

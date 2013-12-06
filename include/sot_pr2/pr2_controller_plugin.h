@@ -36,6 +36,7 @@ private:
     ControlMap controlValues_;
 
     std::vector<double> joint_encoder_;
+    std::vector<double> joint_velocity_;
     std::vector<double> joint_control_;
     std::vector<double> error_raw;
     std::vector<double> error;

@@ -53,6 +53,8 @@ Pr2Device::setSensors(SensorMap &sensorsIn) {
             mlRobotState(i) = 0.;
         updateRobotState(anglesIn);
     }
+    //state_ = mlRobotState;
+    //stateSOUT.setConstant(mlRobotState);
 
     sotDEBUGOUT(25);
 }
@@ -77,6 +79,8 @@ Pr2Device::getControl(ControlMap &controlOut) {
     sotDEBUGIN(25);
     std::vector<double> anglesOut;
     anglesOut.resize(state_.size());
+    std::vector<double> velocitiesOut;
+    velocitiesOut.resize(state_.size());
 
     try { increment(timestep_); }
     catch (...) {
@@ -89,12 +93,31 @@ Pr2Device::getControl(ControlMap &controlOut) {
                                       (state_ - previous_state_) : state_ ) << std::endl;
     previous_state_ = state_;
 
+    // Get control
+
+    ml::Vector control;
+    try {
+        control = controlSIN.accessCopy();
+    }
+    catch (...) {
+        control.resize(state_.size());
+        for (int i=0; i<state_.size(); ++i)
+            control(i) = 0.;
+    }
+
     // Specify joint values
     if (anglesOut.size() != state_.size() - 6)
         anglesOut.resize(state_.size() - 6);
     for (unsigned int i=6; i<state_.size(); ++i)
         anglesOut[i-6] = state_(i);
     controlOut["joints"].setValues(anglesOut);
+
+    // Specify joint velocity
+    if (velocitiesOut.size() != state_.size() - 6)
+        velocitiesOut.resize(state_.size() - 6);
+    for (unsigned int i=6; i<state_.size(); ++i)
+        velocitiesOut[i-6] = control(i);
+    controlOut["velocities"].setValues(velocitiesOut);
 
     // Update position of free flyer
     for (int i = 0;i < 3; ++i)
@@ -103,6 +126,12 @@ Pr2Device::getControl(ControlMap &controlOut) {
         for(unsigned j = 0; j < 3; ++j)
             baseff_[i * 4 + j] = freeFlyerPose () (i, j);
     controlOut["baseff"].setValues(baseff_);
+
+    // Update velocity of free flyer
+    std::vector<double> ffvelocity(6,0.);
+    for (int i=0; i<6; ++i)
+        ffvelocity[i] = control(i);
+    controlOut["ffvelocity"].setValues(ffvelocity);
 
     sotDEBUGOUT(25);
 }
