@@ -118,6 +118,20 @@ Pr2ControllerPlugin::fillSensors() {
     for (unsigned int i=0; i<joints_.size(); ++i)
         joint_encoder_[i] = joints_[i]->position_;
     sensorsIn_["joints"].setValues(joint_encoder_);
+
+    // Get Odometry
+    tf::StampedTransform current_transform;
+    listener_.lookupTransform("base_footprint", "odom_combined", ros::Time(0), current_transform);
+    std::vector<double> odom(6);
+    tf::Vector3 xyz = current_transform.getOrigin();
+    tf::Quaternion q = current_transform.getRotation();
+    odom[0] = -xyz[0];
+    odom[1] = -xyz[1];
+    odom[2] = 0.0;
+    odom[3] = 0.0;
+    odom[4] = 0.0;
+    odom[5] = -std::atan2(2*(q.w()*q.z() + q.x()*q.y()), 1 - 2*(q.y()*q.y() + q.z()*q.z()));
+    sensorsIn_["odometry"].setValues(odom);
 }
 
 void
@@ -129,19 +143,9 @@ Pr2ControllerPlugin::readControl() {
     // Update command
     joint_control_ = controlValues_["joints"].getValues();
     joint_velocity_ = controlValues_["velocities"].getValues();
-    // 0-11 are casters and are commanded by base controller
+    // 0-11 are casters and are controled by base controller
     for (unsigned int i=12; i<joints_.size(); ++i) {
         error[i] = joints_[i]->position_ - joint_control_[i];
-        /*error_raw[i] = joints_[i]->position_ - joint_control_[i];
-        if(error_raw[i] < -3.14159){
-            error[i] = error_raw[i] + 3.14159*2;
-        } else {
-            if(error_raw[i] > 3.14159){
-                error[i] = error_raw[i] - 3.14159*2;
-            } else {
-                error[i] = error_raw[i];
-            }
-        }*/
         double errord = joints_[i]->velocity_ - joint_velocity_[i];
         joints_[i]->commanded_effort_ += pids_[i].updatePid(error[i], errord, dt);
     }

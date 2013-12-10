@@ -56,6 +56,17 @@ Pr2Device::setSensors(SensorMap &sensorsIn) {
     //state_ = mlRobotState;
     //stateSOUT.setConstant(mlRobotState);
 
+    // Odometry
+    it = sensorsIn.find("odometry");
+    if (it != sensorsIn.end()) {
+        std::vector<double> odomIn = it->second.getValues();
+        try {
+            for (unsigned i=0; i<6; ++i)
+                state_(i) = odomIn[i];
+        }
+        catch (...) {}
+    }
+
     sotDEBUGOUT(25);
 }
 
