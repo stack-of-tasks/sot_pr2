@@ -42,7 +42,6 @@ void
 Pr2Device::setSensors(SensorMap &sensorsIn) {
     sotDEBUGIN(25);
     SensorMap::iterator it;
-    int t = stateSOUT.getTime() + 1;
 
     // Joints
     it = sensorsIn.find("joints");
@@ -112,7 +111,7 @@ Pr2Device::getControl(ControlMap &controlOut) {
     }
     catch (...) {
         control.resize(state_.size());
-        for (int i=0; i<state_.size(); ++i)
+        for (unsigned i=0; i<state_.size(); ++i)
             control(i) = 0.;
     }
 

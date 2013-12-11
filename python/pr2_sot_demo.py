@@ -1,6 +1,6 @@
 # 1. Init robot, ros binding, solver
 from dynamic_graph.sot.pr2.pr2_tasks import *
-[robot,ros,sot] = initPr2RosSimuProblem()
+[robot,ros,solver] = initPr2RosSimuProblem()
 
 # 2. Main loop
 from dynamic_graph.sot.core.utils.thread_interruptible_loop import loopInThread,loopShortcuts
@@ -39,11 +39,11 @@ targetBase = (0,0,0,0,0,-0.2)
 gotoNd(taskBase,targetBase,'100011',(4.9,0.9,0.01,0.9))
 
 
-sot=push(sot,taskFov)
-sot=push(sot,taskBase)
-sot=push(sot,taskRH)
-sot=push(sot,taskLH)
-sot.addContact(taskContact)
-sot=push(sot,taskJL)
+solver.push(taskFov.task)
+solver.push(taskBase.task)
+solver.push(taskRH.task)
+solver.push(taskLH.task)
+solver.sot.addContact(taskContact)
+solver.push(taskJL)
 
 print ('Type go to run the solver loop')
