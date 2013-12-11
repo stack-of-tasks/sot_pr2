@@ -11,33 +11,10 @@ from dynamic_graph.sot.dyninv import TaskInequality, TaskJointLimits
 from dynamic_graph.sot.core.meta_task_visual_point import MetaTaskVisualPoint
 from dynamic_graph.ros import *
 
-def toList(sot):
-    return map(lambda x: x[1:-1],sot.dispStack().split('|')[1:])
-    
-def SotPr2(robot):
-    SolverKine.toList = toList
-    sot = SolverKine('sot')
-    sot.setSize(robot.dimension)
-    return sot
-    
-def push(sot,task):
-    if isinstance(task,str): taskName=task
-    elif "task" in task.__dict__:  taskName=task.task.name
-    else: taskName=task.name
-    if taskName not in sot.toList():
-        sot.push(taskName)
-        if taskName!="taskposture" and "taskposture" in sot.toList():
-            sot.down("taskposture")
-    return sot
+from dynamic_graph.sot.application.velocity.precomputed_tasks import Solver
 
-def pop(sot,task):
-    if isinstance(task,str): taskName=task
-    elif "task" in task.__dict__:  taskName=task.task.name
-    else: taskName=task.name
-    if taskName in sot.toList(): sot.rm(taskName)    
-    return sot
-    
-def initializePr2(robot,sot):
+
+def initializePr2(robot,solver):
     robot.dynamic.velocity.value = robot.dimension*(0.,)
     robot.dynamic.acceleration.value = robot.dimension*(0.,)
     robot.dynamic.ffposition.unplug()
@@ -45,25 +22,23 @@ def initializePr2(robot,sot):
     robot.dynamic.ffacceleration.unplug()
     robot.dynamic.setProperty('ComputeBackwardDynamics','true')
     robot.dynamic.setProperty('ComputeAccelerationCoM','true')
-    robot.device.control.unplug()
-    plug(sot.control,robot.device.control)
-    return [robot,sot]
+    return [robot,solver]
 
 def initPr2RosSimuProblem():
     robot = Pr2('pr2', device=RobotSimu('pr2'))
     plug(robot.device.state, robot.dynamic.position)
     ros = Ros(robot)
-    sot = SotPr2(robot)
-    [robot,sot] = initializePr2(robot,sot)
-    return [robot,ros,sot]
+    solver = Solver(robot, SolverKine)
+    [robot,solver] = initializePr2(robot,solver)
+    return [robot,ros,solver]
     
 def initPr2RosProblem():
     plug(robot.device.state, robot.dynamic.position)
     ros = Ros(robot)
-    sot = SotPr2(robot)
-    [robot,sot] = initializePr2(robot,sot)
-    return [robot,ros,sot]
-    
+    solver = Solver(robot, SolverKine)
+    [robot,solver] = initializePr2(robot,solver)
+    return [robot,ros,solver]
+
 
 # -- HANDS ------------------------------------------------------------------
     
@@ -155,7 +130,7 @@ def Pr2BaseTask(robot):
     return task
 
     
-__all__ = ["SotPr2", "Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
-           "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask", "toList",
-           "Pr2FixedContactTask", "initPr2RosSimuProblem", "push", "pop",
-           "Pr2BaseTask", "initPr2RosProblem"]
+__all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
+            "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask",
+            "Pr2FixedContactTask", "initPr2RosSimuProblem",
+            "Pr2BaseTask", "initPr2RosProblem"]
