@@ -50,6 +50,12 @@ class Pr2(AbstractHumanoidRobot):
         self.dynamic.loadFromParameterServer()
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = (0.,) * self.dimension
+        lst = list(self.halfSitting)
+        lst[24] = -0.33
+        lst[26] = -0.47
+        lst[39] = -0.33
+        lst[41] = -0.47
+        self.halfSitting = tuple(lst)
         self.initializeRobot()
 
 __all__ = ["Pr2"]
