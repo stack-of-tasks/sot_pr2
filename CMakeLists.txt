@@ -39,9 +39,6 @@ set(HEADERS
 
 rosbuild_add_library(sot_pr2 ${HEADERS} ${SOURCES})
 
-target_link_libraries(sot_pr2 dynamic-graph)
-target_link_libraries(sot_pr2 sot-core)
-target_link_libraries(sot_pr2 dynamic-graph-python)
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "sot-core")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph-python")

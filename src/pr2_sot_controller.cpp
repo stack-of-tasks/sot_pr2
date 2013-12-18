@@ -32,8 +32,9 @@ workThread(Pr2SotController *actl) {
 }
 
 Pr2SotController::Pr2SotController(std::string name)
-: device_(name),
-  node_(dynamicgraph::rosInit(false,true)) {
+: node_(dynamicgraph::rosInit(false,true))
+, device_(name)
+{
     std::cout << "Going through Pr2SotController." << std::endl;
     boost::thread thr(workThread,this);
     LOG_TRACE("");
