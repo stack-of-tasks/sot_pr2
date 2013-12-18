@@ -1,9 +1,10 @@
 from dynamic_graph import plug
 from dynamic_graph.sot.pr2.pr2_tasks import *
+from dynamic_graph.sot.application.velocity.precomputed_tasks import Solver
 from dynamic_graph.ros import *
 plug(robot.device.state, robot.dynamic.position)
 ros = Ros(robot)
-solver = SotPr2(robot)
+solver = Solver(robot)
 robot.dynamic.velocity.value = robot.dimension*(0.,)
 robot.dynamic.acceleration.value = robot.dimension*(0.,)
 robot.dynamic.ffposition.unplug()
@@ -12,7 +13,7 @@ robot.dynamic.ffacceleration.unplug()
 robot.dynamic.setProperty('ComputeBackwardDynamics','true')
 robot.dynamic.setProperty('ComputeAccelerationCoM','true')
 robot.device.control.unplug()
-plug(solver.control,robot.device.control)
+plug(solver.sot.control,robot.device.control)
 
 dt = 0.001
 taskRH = Pr2RightHandTask(robot)
@@ -31,10 +32,10 @@ taskFov.goto3D(targetRH)
 targetBase = (1.0, 0, 0, 0, 0, 0)
 gotoNd(taskBase,targetBase,'100011',(4.9,0.9,0.01,0.9))
 
-solver=push(solver,taskFov)
-solver=push(solver,taskBase)
-solver=push(solver,taskRH)
-solver=push(solver,taskLH)
+solver.push(taskFov.task)
+solver.push(taskBase.task)
+solver.push(taskRH.task)
+solver.push(taskLH.task)
 solver.addContact(taskContact)
-solver=push(solver,taskJL)
+solver.push(taskJL.task)
 

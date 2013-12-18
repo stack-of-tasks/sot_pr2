@@ -121,16 +121,16 @@ Pr2ControllerPlugin::fillSensors() {
 
     // Get Odometry
     tf::StampedTransform current_transform;
-    listener_.lookupTransform("base_footprint", "odom_combined", ros::Time(0), current_transform);
+    listener_.lookupTransform("odom_combined", "base_footprint", ros::Time(0), current_transform);
     std::vector<double> odom(6);
     tf::Vector3 xyz = current_transform.getOrigin();
     tf::Quaternion q = current_transform.getRotation();
-    odom[0] = -xyz[0];
-    odom[1] = -xyz[1];
+    odom[0] = xyz[0];
+    odom[1] = xyz[1];
     odom[2] = 0.0;
     odom[3] = 0.0;
     odom[4] = 0.0;
-    odom[5] = -std::atan2(2*(q.w()*q.z() + q.x()*q.y()), 1 - 2*(q.y()*q.y() + q.z()*q.z()));
+    odom[5] = std::atan2(2*(q.w()*q.z() + q.x()*q.y()), 1 - 2*(q.y()*q.y() + q.z()*q.z()));
     sensorsIn_["odometry"].setValues(odom);
 }
 
