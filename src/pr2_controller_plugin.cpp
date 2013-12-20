@@ -81,7 +81,7 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
     }
 
     // TF Listener
-    listener_.waitForTransform("base_footprint", "odom_combined", ros::Time(0), ros::Duration(1.0));
+    listener_.waitForTransform("odom_combined", "base_footprint", ros::Time(0), ros::Duration(1.0));
 
     // Allocate space
     const unsigned int jsz = joints_.size();
@@ -153,11 +153,12 @@ Pr2ControllerPlugin::readControl() {
     // Base controller
     geometry_msgs::Twist base_cmd;
     std::vector<double> vel = controlValues_["ffvelocity"].getValues();
+    std::vector<double> ff = controlValues_["baseff"].getValues();
     base_cmd.linear.x = base_cmd.linear.y = base_cmd.linear.z = 0;
     base_cmd.angular.x = base_cmd.angular.y = base_cmd.angular.z = 0;
-    base_cmd.linear.x = vel[0];
-    base_cmd.linear.y = vel[1];
-    base_cmd.angular.z = vel[5];
+    base_cmd.linear.x = ff[0]*vel[0] + ff[1]*vel[1];
+    base_cmd.linear.y = ff[4]*vel[0] + ff[5]*vel[1];
+    base_cmd.angular.z = ff[10]*vel[5];
     cmd_vel_pub_.publish(base_cmd);
 
     // State publishing

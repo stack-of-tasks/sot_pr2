@@ -29,11 +29,12 @@ gotoNd(taskRH,targetRH,'111',(4.9,0.9,0.01,0.9))
 targetLH = (0.65,0.6,0.3)
 gotoNd(taskLH,targetLH,'111',(4.9,0.9,0.01,0.9))
 taskFov.goto3D(targetRH)
+
 targetBase = (1.0, 0, 0, 0, 0, 0)
 gotoNd(taskBase,targetBase,'100011',(4.9,0.9,0.01,0.9))
+solver.push(taskBase.task)
 
 solver.push(taskFov.task)
-solver.push(taskBase.task)
 solver.push(taskRH.task)
 solver.push(taskLH.task)
 solver.addContact(taskContact)
