@@ -123,7 +123,7 @@ Pr2ControllerPlugin::fillSensors() {
     sensorsIn_["velocities"].setName("velocity");
     for (unsigned int i=0; i<joints_.size(); ++i)
         joint_velocity_[i] = joints_[i]->velocity_;
-    sensorsIn_["joints"].setValues(joint_encoder_);
+    sensorsIn_["velocities"].setValues(joint_velocity_);
 
     // Get Odometry
     tf::StampedTransform current_transform;
