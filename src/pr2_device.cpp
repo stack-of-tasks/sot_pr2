@@ -43,17 +43,32 @@ Pr2Device::setSensors(SensorMap &sensorsIn) {
     sotDEBUGIN(25);
     SensorMap::iterator it;
 
-    // Joints
+    // Joints positions
     it = sensorsIn.find("joints");
     if (it != sensorsIn.end()) {
         const std::vector<double> &anglesIn = it->second.getValues();
-        mlRobotState.resize(anglesIn.size() + 6);
-        for (unsigned i=0; i<6; ++i)
-            mlRobotState(i) = 0.;
-        updateRobotState(anglesIn);
+        state_.resize(anglesIn.size() + 6);
+        for (unsigned i=0;i<6; ++i)
+            state_(i) = 0.;
+        for (unsigned i=0; i<anglesIn.size(); ++i)
+            state_(i+6) = anglesIn[i];
     }
-    //state_ = mlRobotState;
-    //stateSOUT.setConstant(mlRobotState);
+    // RobotState
+    //mlRobotState.resize(anglesIn.size() + 6);
+    /*for (unsigned i=0; i<6; ++i)
+        mlRobotState(i) = 0.;
+    updateRobotState(anglesIn);*/
+
+    // Joint velocities
+    it = sensorsIn.find("velocities");
+    if (it != sensorsIn.end()) {
+        const std::vector<double> &velIn = it->second.getValues();
+        velocity_.resize(velIn.size() + 6);
+        for (unsigned i=0;i<6; ++i)
+            velocity_(i) = 0.;
+        for (unsigned i=0; i<velIn.size(); ++i)
+            velocity_(i+6) = velIn[i];
+    }
 
     // Odometry
     it = sensorsIn.find("odometry");
