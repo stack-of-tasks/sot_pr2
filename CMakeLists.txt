@@ -17,6 +17,7 @@ ADD_REQUIRED_DEPENDENCY("jrl-mal")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph-python")
 ADD_REQUIRED_DEPENDENCY("sot-core")
+ADD_REQUIRED_DEPENDENCY("jrl-dynamics-urdf")
 
 # This is required by the Python prologue.
 ADD_REQUIRED_DEPENDENCY("sot-dynamic")
@@ -42,6 +43,7 @@ rosbuild_add_library(sot_pr2 ${HEADERS} ${SOURCES})
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "sot-core")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph-python")
+PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "jrl-dynamics-urdf")
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(python)
