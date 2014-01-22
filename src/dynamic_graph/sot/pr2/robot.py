@@ -60,6 +60,16 @@ class Pr2(AbstractHumanoidRobot):
         lst[39] = -0.33
         lst[41] = -0.47
         self.halfSitting = tuple(lst)
+
+        # correct the initialization of the dynamic.
+        self.dynamic.velocity.value = self.dimension*(0.,)
+        self.dynamic.acceleration.value = self.dimension*(0.,)
+        self.dynamic.ffposition.unplug()
+        self.dynamic.ffvelocity.unplug()
+        self.dynamic.ffacceleration.unplug()
+        self.dynamic.setProperty('ComputeBackwardDynamics','true')
+        self.dynamic.setProperty('ComputeAccelerationCoM','true')
+
         self.initializeRobot()
 
 __all__ = ["Pr2"]

@@ -14,29 +14,18 @@ from dynamic_graph.ros import *
 from dynamic_graph.sot.application.velocity.precomputed_tasks import Solver
 
 
-def initializePr2(robot,solver):
-    robot.dynamic.velocity.value = robot.dimension*(0.,)
-    robot.dynamic.acceleration.value = robot.dimension*(0.,)
-    robot.dynamic.ffposition.unplug()
-    robot.dynamic.ffvelocity.unplug()
-    robot.dynamic.ffacceleration.unplug()
-    robot.dynamic.setProperty('ComputeBackwardDynamics','true')
-    robot.dynamic.setProperty('ComputeAccelerationCoM','true')
-    return [robot,solver]
 
 def initPr2RosSimuProblem():
     robot = Pr2('pr2', device=RobotSimu('pr2'))
     plug(robot.device.state, robot.dynamic.position)
     ros = Ros(robot)
     solver = Solver(robot, SolverKine)
-    [robot,solver] = initializePr2(robot,solver)
     return [robot,ros,solver]
     
 def initPr2RosProblem():
     plug(robot.device.state, robot.dynamic.position)
     ros = Ros(robot)
     solver = Solver(robot, SolverKine)
-    [robot,solver] = initializePr2(robot,solver)
     return [robot,ros,solver]
 
 
