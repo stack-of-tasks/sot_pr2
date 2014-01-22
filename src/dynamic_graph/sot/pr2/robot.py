@@ -24,10 +24,17 @@ class Pr2(AbstractHumanoidRobot):
     This class instanciates a Pr2 robot.
     """
 
-    OperationalPoints = ['right-wrist','left-wrist','waist','gaze','chest','left-ankle']
-    
-    SpecialLinks  = ['BODY', 'l_wrist', 'r_wrist', 'l_gripper', 'r_gripper', 'gaze','torso','l_ankle']
-    SpecialNames = ['base_link', 'l_wrist_roll_link', 'r_wrist_roll_link', 'l_gripper_palm_link', 'r_gripper_palm_link', 'double_stereo_link','torso_lift_link','base_link']
+    OperationalPoints = ['right-wrist','left-wrist','waist','gaze','chest'] #,'left-ankle']
+
+    jointMap={}
+    jointMap['BODY']      = 'base_link'
+    jointMap['l_wrist']   = 'l_wrist_roll_link'
+    jointMap['r_wrist']   = 'r_wrist_roll_link'
+    jointMap['l_gripper'] = 'l_gripper_palm_link'
+    jointMap['r_gripper'] = 'r_gripper_palm_link'
+    jointMap['gaze']      = 'double_stereo_link'
+    jointMap['torso']     = 'torso_lift_link'
+#    jointMap['l_ankle']   = 'base_link' # TODO?
 
     tracedSignals = {
         'dynamic': ["com", "position", "velocity", "acceleration"],
@@ -35,11 +42,8 @@ class Pr2(AbstractHumanoidRobot):
         }
         
     def specifySpecialLinks(self):
-        if len(self.SpecialLinks) == len(self.SpecialNames):
-            for i in range(0,len(self.SpecialLinks)):
-                self.dynamic.addJointMapping(self.SpecialLinks[i], self.SpecialNames[i])
-        else:
-            print 'No Special joints added : SpecialLinks.size != SpecialJoints.size'
+        for i in self.jointMap:
+            self.dynamic.addJointMapping(i, self.jointMap[i])
 
     def __init__(self, name, device = None, tracer = None):
         AbstractHumanoidRobot.__init__ (self, name, tracer)
