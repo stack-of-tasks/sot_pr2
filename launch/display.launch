@@ -6,8 +6,8 @@
     <param name="robot_base_link" value="base_footprint"/>
     <!--<param name="ref_link" value="odom_combined"/>-->
 
-    <arg name="frame" value="base_footprint"/>
-    <arg name="child_frame" value="odom"/>
+    <arg name="frame" value="odom"/>
+    <arg name="child_frame" value="base_footprint"/>
 
     <node name="robot_pose_publisher" pkg="sot_pr2" type="robot_pose_publisher" args="_frame:=$(arg frame) _child_frame:=$(arg child_frame)">
         <env name="ROS_NAMESPACE" value="/dynamic_graph" />
