@@ -24,17 +24,17 @@ class Pr2(AbstractHumanoidRobot):
     This class instanciates a Pr2 robot.
     """
 
-    OperationalPoints = ['right-wrist','left-wrist','waist','gaze','chest'] #,'left-ankle']
+    OperationalPoints = ['right-wrist','left-wrist','waist','gaze','chest','left-ankle']
 
     jointMap={}
     jointMap['BODY']      = 'base_link'
-    jointMap['l_wrist']   = 'l_wrist_roll_link'
-    jointMap['r_wrist']   = 'r_wrist_roll_link'
-    jointMap['l_gripper'] = 'l_gripper_palm_link'
-    jointMap['r_gripper'] = 'r_gripper_palm_link'
+    jointMap['l_wrist']   = 'l_gripper_palm_link'
+    jointMap['r_wrist']   = 'r_gripper_palm_link'
+    jointMap['l_gripper'] = 'l_gripper_tool_frame'
+    jointMap['r_gripper'] = 'r_gripper_tool_frame'
     jointMap['gaze']      = 'double_stereo_link'
     jointMap['torso']     = 'torso_lift_link'
-#    jointMap['l_ankle']   = 'base_link' # TODO?
+    jointMap['l_ankle']   = 'base_link' # TODO?
 
     tracedSignals = {
         'dynamic': ["com", "position", "velocity", "acceleration"],
