@@ -1,6 +1,21 @@
 # 1. Init robot, ros binding, solver
 from dynamic_graph.sot.pr2.pr2_tasks import *
-[robot,ros,solver] = initPr2RosSimuProblem()
+from dynamic_graph.sot.pr2.robot import *
+from dynamic_graph.sot.core.robot_simu import RobotSimu
+from dynamic_graph import plug
+
+# creates the robot.
+robot = Pr2('pr2', device=RobotSimu('pr2'))
+plug(robot.device.state, robot.dynamic.position)
+
+# publish to ros
+from dynamic_graph.ros import *
+ros = Ros(robot)
+
+# Use kine solver (with inequalities)
+from dynamic_graph.sot.dyninv import SolverKine
+solver = initialize(robot, SolverKine)
+
 
 # 2. Main loop
 from dynamic_graph.sot.core.utils.thread_interruptible_loop import loopInThread,loopShortcuts

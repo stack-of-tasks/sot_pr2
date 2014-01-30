@@ -2,7 +2,9 @@
 # The URDF description of the robot must have 
 # been loaded in robot_description parameter
 # on the Ros Parameter Server
-from dynamic_graph.sot.pr2.robot import Pr2
+# 1. Init robot, ros binding, solver
+from dynamic_graph.sot.pr2.pr2_tasks import *
+from dynamic_graph.sot.pr2.robot import *
 from dynamic_graph.sot.core import RobotSimu
 from dynamic_graph import plug
 robot = Pr2('PR2', device=RobotSimu('PR2'))
@@ -13,9 +15,8 @@ plug(robot.device.state, robot.dynamic.position)
 from dynamic_graph.ros import Ros
 ros = Ros(robot)
 
-# 3. Create a solver
-from dynamic_graph.sot.application.velocity.precomputed_tasks import Solver
-solver = Solver(robot)
+# Use kine solver (with inequalities)
+solver = initialize(robot)
 
 # 4. Define a position task for the right hand
 from dynamic_graph.sot.core.meta_tasks_kine import gotoNd, MetaTaskKine6d
@@ -54,3 +55,4 @@ runner.once()
 [go,stop,next,n]=loopShortcuts(runner)
 
 print 'Type go to run the solver loop'
+
