@@ -48,7 +48,7 @@ def initialize (robot, solverType=SOT):
 
     # --- push balance task --- #
     robot.tasks ['contact'] = Pr2ContactTask(robot)
-    robot.tasks ['contact'].feature.selec.value = '111111'
+    robot.tasks ['contact'].feature.selec.value = '011100'
     solver.push (robot.tasks['contact'].task)
 
     return solver
@@ -84,7 +84,8 @@ def initPostureTask(robot):
   postureTaskDofs = [True]*(51)
 
   for dof,isEnabled in enumerate(postureTaskDofs):
-    robot.features['featurePosition'].selectDof(dof,isEnabled)
+    if dof > 6:
+      robot.features['featurePosition'].selectDof(dof,isEnabled)
 
   robot.tasks['robot_task_position']=Task('robot_task_position')
   robot.tasks['robot_task_position'].add('featurePosition')

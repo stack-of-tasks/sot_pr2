@@ -39,11 +39,11 @@ taskBase = Pr2BaseTask(robot)
 from dynamic_graph.sot.core.meta_tasks_kine import gotoNd
 
 # 4.1 Right hand
-targetRH = (0.60,0.2,0.8)
+targetRH = (0.60,-0.2,0.8)
 gotoNd(taskRH,targetRH,'111',(4.9,0.9,0.01,0.9))
 
 # 4.2 Left hand
-targetLH = (0.65,0.6,0.3)
+targetLH = (0.65,0.2,0.8)
 gotoNd(taskLH,targetLH,'111',(4.9,0.9,0.01,0.9))
 
 # 4.3 Look at the right hand target
