@@ -8,6 +8,8 @@
 #include <sot/core/debug.hh>
 #include <sot/core/exception-abstract.hh>
 
+#define ROBOTNAME std::string("PR2")
+
 namespace sot_pr2 {
 
 const std::string Pr2SotController::LOG_PYTHON="/tmp/pr2_sot_controller.out";
@@ -31,9 +33,9 @@ workThread(Pr2SotController *actl) {
     ros::waitForShutdown();
 }
 
-Pr2SotController::Pr2SotController(std::string name)
+Pr2SotController::Pr2SotController()
 : node_(dynamicgraph::rosInit(false,true))
-, device_(name)
+, device_(ROBOTNAME)
 {
     std::cout << "Going through Pr2SotController." << std::endl;
     boost::thread thr(workThread,this);
@@ -116,3 +118,21 @@ Pr2SotController::startupPython() {
 }
 
 }
+
+extern "C"
+{
+  dynamicgraph::sot::AbstractSotExternalInterface * createSotExternalInterface()
+  {
+    return new sot_pr2::Pr2SotController;
+  }
+}
+
+extern "C"
+{
+  void destroySotExternalInterface(dynamicgraph::sot::AbstractSotExternalInterface *p)
+  {
+    delete p;
+  }
+}
+
+

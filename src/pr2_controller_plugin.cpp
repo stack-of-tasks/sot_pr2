@@ -8,7 +8,7 @@ std::ofstream logout;
 
 Pr2ControllerPlugin::Pr2ControllerPlugin()
     : pr2_controller_interface::Controller(),
-      sot_controller_("SoTPR2"),
+      sot_controller_(),
       loop_count_(0),
       robot_(NULL) {
     logout.open("/tmp/out.log", std::ios::out);

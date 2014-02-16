@@ -13,7 +13,7 @@ public:
     static const std::string LOG_PYTHON;
 
 public:
-    explicit Pr2SotController(std::string name);
+    explicit Pr2SotController();
     virtual ~Pr2SotController();
 
     void setupSetSensors(SensorMap &sensorsIn);
