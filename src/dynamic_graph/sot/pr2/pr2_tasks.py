@@ -47,9 +47,14 @@ def initialize (robot, solverType=SOT):
     solver = Solver (robot, solverType)
 
     # --- push balance task --- #
-    robot.tasks ['contact'] = Pr2ContactTask(robot)
-    robot.tasks ['contact'].feature.selec.value = '011100'
-    solver.push (robot.tasks['contact'].task)
+    metaContact = Pr2ContactTask(robot)
+    robot.tasks ['contact'] = metaContact.task
+    robot.features ['contact'] = metaContact.feature
+    metaContact.feature.selec.value = '011100'
+    metaContact.featureDes.position.value = \
+      array([[1,0,0,0],[0,1,0,0],[0,0,1,0.051],[0,0,0,1]])
+    solver.push(robot.tasks['contact'])
+#    solver.sot.addContact(robot.tasks['contact'])
 
     return solver
 
@@ -146,19 +151,8 @@ def Pr2ContactTask(robot):
     task.gain.setConstant(10)
     #locals()['contact'] = task
     return task
-    
-    
-def Pr2FixedContactTask(robot):
-    task = MetaTaskKine6d('contactFixed',robot.dynamic,'contact','left-ankle')
-    task.feature.frame('desired')
-    task.gain.setConstant(10)
-    #task.feature.selec.value = '111111'
-    #locals()['contactFixed'] = task
-    return task
-
 
 # -- WAIST  ------------------------------------------------------------------ 
-
 baseMground=eye(4);
 baseMground[0:3,3] = (0,0,-0.051)
 
@@ -173,5 +167,5 @@ def Pr2BaseTask(robot):
     
 __all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
             "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask",
-            "Pr2FixedContactTask", "initialize", "Pr2ChestTask",
+            "initialize", "Pr2ChestTask",
             "Pr2BaseTask", "initPostureTask"]

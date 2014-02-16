@@ -1,3 +1,6 @@
+# 0. TRICK: import Dynamic as the first command to avoid the crash at the exit
+from dynamic_graph.sot.dynamics import Dynamic
+
 # 1. Instanciate a Pr2
 # The URDF description of the robot must have 
 # been loaded in robot_description parameter
@@ -31,17 +34,8 @@ selec='111'
 gain=(4.9,0.9,0.01,0.9)
 gotoNd(taskRH,targetR,selec,gain)
 
-# 5. Add a contact constraint with the robot and the floor
-contact = MetaTaskKine6d('contact',robot.dynamic,'contact','left-ankle')
-contact.feature.frame('desired')
-contact.feature.selec.value = '011100'
-contact.gain.setConstant(10)
-contact.keep()
-locals()['contactBase'] = contact
-
 # 6. Push tasks in the solver
 solver.push(taskRH.task)
-solver.push(contactBase.task)
 
 # Main loop
 dt=3e-3
