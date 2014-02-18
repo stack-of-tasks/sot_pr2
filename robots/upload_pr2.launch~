@@ -1,7 +1,0 @@
-<launch>
-    <!-- send pr2 urdf to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find sot_pr2)/robots/pr2_light.urdf.xacro'" />
-
-    <!-- the semantic description that corresponds to the URDF -->
-    <param name="robot_description_semantic" textfile="$(find sot_pr2)/robots/pr2.srdf" />
-</launch>
