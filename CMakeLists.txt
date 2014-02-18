@@ -3,6 +3,10 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 include(cmake/base.cmake)
 include(cmake/python.cmake)
+if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR lib)
+endif()
+include(cmake/GNUInstallDirs.cmake)
 
 set(ROS_BUILD_TYPE RelWithDebInfo)
 
@@ -21,6 +25,14 @@ ADD_REQUIRED_DEPENDENCY("jrl-dynamics-urdf")
 
 # This is required by the Python prologue.
 ADD_REQUIRED_DEPENDENCY("sot-dynamic")
+
+
+# Handle rpath necessary to handle ROS multiplace packages
+# libraries inclusion
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Python
 INCLUDE(cmake/python.cmake)
@@ -44,6 +56,8 @@ PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "sot-core")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph-python")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "jrl-dynamics-urdf")
+install(TARGETS sot_pr2 DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(python)
+
