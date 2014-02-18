@@ -108,8 +108,8 @@ Pr2Device::getControl(ControlMap &controlOut) {
     velocitiesOut.resize(state_.size());
 
     try { increment(timestep_); }
-    catch (...) {
-        //std::cout << "Increment error (" << loop_count_ << ") (" << controlSIN << ")" << std::endl;
+    catch (std::exception & e) {
+        std::cerr <<" Pr2Device::getControl " <<  e.what()  << std::endl;
     }
      //++loop_count_;
 
