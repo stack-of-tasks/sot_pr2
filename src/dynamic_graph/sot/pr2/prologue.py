@@ -22,7 +22,7 @@ from dynamic_graph.sot.pr2.robot import Pr2
 
 Device = PyEntityFactoryClass('Pr2Device')
 
-robot = Pr2(name = 'robot', device = Device('SoTPR2'))
+robot = Pr2(name = 'robot', device = Device('PR2'))
 
 #todo: necessary?
 #plug(robot.device.state, robot.dynamic.position)
