@@ -18,6 +18,7 @@ plug(solver.sot.control,robot.device.control)
 dt = 0.001
 taskRH = Pr2RightHandTask(robot)
 taskLH = Pr2LeftHandTask(robot)
+taskJL = Pr2JointLimitsTask(robot,dt)
 taskContact = Pr2ContactTask(robot)
 taskFov = Pr2FoVTask(robot,dt)
 taskBase = Pr2BaseTask(robot)
@@ -37,4 +38,5 @@ solver.push(taskFov.task)
 solver.push(taskRH.task)
 solver.push(taskLH.task)
 solver.addContact(taskContact)
+solver.push(taskJL.task)
 
