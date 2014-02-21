@@ -85,8 +85,8 @@ def initPostureTask(robot):
   robotDim = len(robot.dynamic.velocity.value)
   robot.features['featurePosition'].posture.value = robot.halfSitting
 
-  postureTaskDofs = [True]*6 + [False]*(51-6)
-  postureTaskDofs = [True]*(51)
+  postureTaskDofs = [True]*6 + [False]*(robot.dimension-6)
+  postureTaskDofs = [True]*(robot.dimension)
 
   for dof,isEnabled in enumerate(postureTaskDofs):
     if dof > 6:
