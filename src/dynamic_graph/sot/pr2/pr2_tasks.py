@@ -126,22 +126,6 @@ def Pr2FoVTask(robot,dt):
     task.featureDes.xy.value = (0,0)
     return task
     
-
-# -- JOINTS LIMITS  ---------------------------------------------------------
-
-def Pr2JointLimitsTask(robot,dt):
-    robot.dynamic.upperJl.recompute(0)
-    robot.dynamic.lowerJl.recompute(0)
-    task = TaskJointLimits('taskJL')
-    plug(robot.dynamic.position,task.position)
-    task.controlGain.value = 10
-    task.referenceInf.value = robot.dynamic.lowerJl.value
-    task.referenceSup.value = robot.dynamic.upperJl.value
-    task.dt.value = dt
-    task.selec.value = toFlags(range(18,25)+range(26,27)+range(28,31)+range(32,40)+range(41,42)+range(43,46)+range(47,50))
-    return task
-    
-
 # -- CONTACT  --------------------------------------------------------------- 
 
 def Pr2ContactTask(robot):
@@ -166,6 +150,6 @@ def Pr2BaseTask(robot):
 
     
 __all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
-            "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask",
+            "Pr2FoVTask", "Pr2ContactTask",
             "initialize", "Pr2ChestTask",
             "Pr2BaseTask", "initPostureTask"]
