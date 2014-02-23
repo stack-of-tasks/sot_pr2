@@ -63,7 +63,7 @@ gotoNd(taskBase,targetBase,'100011',(4.9,0.9,0.01,0.9))
 # 4.4 Base position
 solver.push(taskFov.task)
 solver.push(taskBase.task)
-solver.push(taskChest.task)
+#solver.push(taskChest.task)
 
 print ('Type go to run the solver loop')
 

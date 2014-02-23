@@ -132,19 +132,21 @@ def Pr2ContactTask(robot):
     task = MetaTaskKine6d('contact',robot.dynamic,'contact','left-ankle')
     task.feature.frame('desired')
     task.feature.selec.value = '011100'
+    task.featureDes.position.value = \
+      array([[1,0,0,0],[0,1,0,0],[0,0,1,0.051],[0,0,0,1]])
     task.gain.setConstant(10)
     #locals()['contact'] = task
     return task
 
 # -- WAIST  ------------------------------------------------------------------ 
-baseMground=eye(4);
-baseMground[0:3,3] = (0,0,-0.051)
 
 def Pr2BaseTask(robot):
     task = MetaTaskKine6d('base',robot.dynamic,'waist','waist')
+    baseMground=eye(4);
+    baseMground[0:3,3] = (0,0,0)
     task.opmodif = matrixToTuple(baseMground)
     task.feature.frame('desired')
-    task.feature.selec.value = '011100'
+    task.feature.selec.value = '100011'
     task.gain.setConstant(10)
     return task
 
