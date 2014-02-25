@@ -1,5 +1,9 @@
 <launch>
-    <include file="$(find gazebo_worlds)/launch/empty_world.launch"/>
+    <include file="$(find sot_pr2)/launch/pr2_empty_world.launch">
+	<arg name="use_sim_time" value="true" />
+	<arg name="throttled" default="false"/>
+        <arg name="physics" default="true"/>
+    </include>
 
     <!-- Startup PR2 without any mechanism controllers -->
     <include file="$(find sot_pr2)/launch/spawn_pr2.launch"/>
@@ -7,13 +11,6 @@
     <!--<node name="pr2_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
         <env name="ROS_NAMESPACE" value="/dynamic_graph"/>
     </node>-->
-
-    <!--<rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_base_controller.yaml" command="load" />
-    <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_odometry.yaml" command="load" />
-    <node name="pr2_base_controllers_spawner" pkg="pr2_controller_manager" type="spawner" output="screen"
-        args="--wait-for=/calibrated base_controller base_odometry" />-->
-
-    <include file="$(find sot_pr2)/launch/spawn_pr2_controller.launch" />
 
 </launch>
 

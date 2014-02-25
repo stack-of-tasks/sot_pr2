@@ -9,4 +9,6 @@
     <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_base_controller.yaml" command="load" />
     <rosparam file="$(find pr2_controller_configuration_gazebo)/pr2_odometry.yaml" command="load" />
     <node name="pr2_base_controllers_spawner" pkg="pr2_controller_manager" type="spawner" output="screen" args="--wait-for=/calibrated base_controller base_odometry" />
+
+    <!--<node pkg="pr2_controller_manager" type="spawner" args="r_gripper_controller" name="pr2_right_gripper_controller">-->
 </launch>

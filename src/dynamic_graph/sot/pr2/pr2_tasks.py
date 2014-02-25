@@ -70,6 +70,63 @@ def Pr2LeftHandTask(robot):
     task=MetaTaskKine6d('left-wrist',robot.dynamic,'left-wrist','left-wrist')
     task.feature.frame('desired')
     return task
+    
+# -- GRIPPERS --------------------------------------------------------------
+class Pr2Gripper: 
+    feature = None
+    featureDes = None
+    task = None
+    
+    """
+    name:
+    robot the robot
+    index: index of the first gripper value in the state vector
+    dim: dimension of the gripper
+    """ 
+    def __init__(self, name, robot, indexes):
+        dim=len(indexes)
+        self.feature = FeatureGeneric('feature'+name)
+        self.featureDes = FeatureGeneric('featureDes'+name)
+        self.feature.setReference('featureDes'+name)
+        self.featureDes.errorIN.value = (0,) * dim;
+        
+        # create jacobian.
+        jacobianGripper = eye(dim,robot.dimension) * 0;
+        position=0
+        for index in indexes:
+            jacobianGripper[position][index] = 1;
+            ++position
+            #    jacobianGripper[1][index+1] = 1;
+        self.feature.jacobianIN.value = jacobianGripper
+            
+        # only selec some dofs
+        selecRightGripper = Selec_of_vector('selecRightGripper')
+        selecRightGripper.selec(index, index+dim)
+        plug(robot.dynamic.position, selecRightGripper.sin)        
+        plug(selecRightGripper.sout, self.feature.errorIN)
+        
+        # 2\ Define the task. Associate to the task the position feature.
+        self.task = Task('task'+name)
+        self.task.add('feature'+name)
+        self.task.controlGain.value = 1
+        
+    def open(self):
+        pos = self.featureDes.errorIN.value
+        self.featureDes.errorIN.value=(pos[0], 0)
+            
+    def close(self):
+        pos = self.featureDes.errorIN.value
+        self.featureDes.errorIN.value=(pos[0], 1)
+
+    def set(self, position):
+        initpos = self.featureDes.errorIN.value 
+        self.featureDes.errorIN.value = position
+
+
+def Pr2RightGripper(robot):
+    gripper = Pr2Gripper('right-gripper', robot,[43])
+    return gripper
+
 
 # -- CHEST ------------------------------------------------------------------
 def Pr2ChestTask(robot):
@@ -152,6 +209,6 @@ def Pr2BaseTask(robot):
 
     
 __all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
-            "Pr2FoVTask", "Pr2ContactTask",
+            "Pr2FoVTask", "Pr2ContactTask", "Pr2RightGripper",
             "initialize", "Pr2ChestTask",
             "Pr2BaseTask", "initPostureTask"]

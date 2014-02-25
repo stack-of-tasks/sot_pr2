@@ -3,7 +3,7 @@
 
 #include <pr2_controller_interface/controller.h>
 #include <pr2_mechanism_model/joint.h>
-#include <sot_pr2/pr2_sot_controller.h>
+#include <sot_pr2/pr2_threaded_sot_controller.h>
 #include <control_toolbox/pid.h>
 #include <boost/scoped_ptr.hpp>
 #include <realtime_tools/realtime_publisher.h>
@@ -31,7 +31,7 @@ private:
 
 private:
     // SoT Controller
-    Pr2SotController sot_controller_;
+    Pr2ThreadedSotController sot_controller_;
     SensorMap sensorsIn_;
     ControlMap controlValues_;
 
@@ -60,6 +60,9 @@ private:
     tf::TransformListener listener_;
 
     double timeFromStart_;
+
+    int _iter;
+    double _mean;
 };
 
 }

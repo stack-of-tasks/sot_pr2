@@ -49,6 +49,7 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
             ROS_ERROR("Array of joint names should contain all strings. (namespace: %s)", sot_controller_.node_.getNamespace().c_str());
             return false;
         }
+        //std::cout << i << " : " << name_value << std::endl;
         Pr2JointPtr j;
         j.reset(robot->getJointState((std::string)name_value));
         if (!j) {
@@ -108,6 +109,9 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
 
     timeFromStart_ = 0.0;
 
+    // Start Pr2 Sot Controller
+    sot_controller_.init();
+
     return true;
 }
 
@@ -160,11 +164,13 @@ Pr2ControllerPlugin::readControl() {
     geometry_msgs::Twist base_cmd;
     std::vector<double> vel = controlValues_["ffvelocity"].getValues();
     std::vector<double> ff = controlValues_["baseff"].getValues();
-    base_cmd.linear.x = base_cmd.linear.y = base_cmd.linear.z = 0;
-    base_cmd.angular.x = base_cmd.angular.y = base_cmd.angular.z = 0;
-    base_cmd.linear.x = ff[0]*vel[0] + ff[1]*vel[1];
-    base_cmd.linear.y = ff[4]*vel[0] + ff[5]*vel[1];
-    base_cmd.angular.z = ff[10]*vel[5];
+    if (ff.size() == 12) {
+        base_cmd.linear.x = base_cmd.linear.y = base_cmd.linear.z = 0;
+        base_cmd.angular.x = base_cmd.angular.y = base_cmd.angular.z = 0;
+        base_cmd.linear.x = ff[0]*vel[0] + ff[1]*vel[1];
+        base_cmd.linear.y = ff[4]*vel[0] + ff[5]*vel[1];
+        base_cmd.angular.z = ff[10]*vel[5];
+    }
     cmd_vel_pub_.publish(base_cmd);
 
     // State publishing
@@ -200,21 +206,40 @@ Pr2ControllerPlugin::starting() {
     }
     catch (std::exception &e) { throw e; }
     readControl();
+
+    _iter = 0;
+    _mean = 0.;
 }
 
 void
 Pr2ControllerPlugin::update() {
+    //std::cout << "UPDATE" << std::endl;
     fillSensors();
+
+    struct timeval t0, t1;
+    gettimeofday(&t0,0);
+
     try {
         sot_controller_.nominalSetSensors(sensorsIn_);
         sot_controller_.getControl(controlValues_);
     }
     catch (std::exception &e) { throw e; }
+
+    gettimeofday(&t1, 0);
+    _mean += (t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec;
+    ++_iter;
+    if (_iter == 100) {
+        std::cout << "[Pr2ControllerPlugin] : " << _mean/_iter << " µs" << std::endl;
+        _iter = 0;
+        _mean = 0.;
+    }
+
     readControl();
 }
 
 void
 Pr2ControllerPlugin::stopping() {
+    std::cout << "STOPPING" << std::endl;
     fillSensors();
     try {
         sot_controller_.cleanupSetSensors(sensorsIn_);
