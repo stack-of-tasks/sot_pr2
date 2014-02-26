@@ -37,6 +37,7 @@ taskJL = Pr2JointLimitsTask(robot,dt)
 taskFov = Pr2FoVTask(robot,dt)
 taskBase = Pr2BaseTask(robot)
 taskChest = Pr2ChestTask(robot)
+(taskWeight, featureWeight) = Pr2Weight(robot)
 initPostureTask(robot)
 
 # 4. Formulate problem
@@ -62,8 +63,12 @@ gotoNd(taskBase,targetBase,'100011',(4.9,0.9,0.01,0.9))
 
 
 # 4.4 Base position
+solver.push(taskJL)
 solver.push(taskFov.task)
 solver.push(taskBase.task)
+solver.push(taskRH.task)
+solver.push(taskWeight)
+
 #solver.push(taskChest.task)
 
 print ('Type go to run the solver loop')
