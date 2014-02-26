@@ -2,6 +2,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <geometry_msgs/Twist.h>
 
+
 namespace sot_pr2 {
 
 std::ofstream logout;
@@ -12,9 +13,17 @@ Pr2ControllerPlugin::Pr2ControllerPlugin()
       loop_count_(0),
       robot_(NULL) {
     logout.open("/tmp/out.log", std::ios::out);
+
+    // Grippers init
+    r_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("r_gripper_controller/gripper_action", true);
+    l_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("l_gripper_controller/gripper_action", true);
+    r_gripper_position = 0;
+    l_gripper_position = 0;
 }
 
 Pr2ControllerPlugin::~Pr2ControllerPlugin() {
+    delete r_gripper_client_;
+    delete l_gripper_client_;
 }
 
 bool
@@ -49,6 +58,7 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
             ROS_ERROR("Array of joint names should contain all strings. (namespace: %s)", sot_controller_.node_.getNamespace().c_str());
             return false;
         }
+        //std::cout << i << " : " << name_value << std::endl;
         Pr2JointPtr j;
         j.reset(robot->getJointState((std::string)name_value));
         if (!j) {
@@ -108,6 +118,9 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
 
     timeFromStart_ = 0.0;
 
+    // Start Pr2 Sot Controller
+    sot_controller_.init();
+
     return true;
 }
 
@@ -160,12 +173,26 @@ Pr2ControllerPlugin::readControl() {
     geometry_msgs::Twist base_cmd;
     std::vector<double> vel = controlValues_["ffvelocity"].getValues();
     std::vector<double> ff = controlValues_["baseff"].getValues();
-    base_cmd.linear.x = base_cmd.linear.y = base_cmd.linear.z = 0;
-    base_cmd.angular.x = base_cmd.angular.y = base_cmd.angular.z = 0;
-    base_cmd.linear.x = ff[0]*vel[0] + ff[1]*vel[1];
-    base_cmd.linear.y = ff[4]*vel[0] + ff[5]*vel[1];
-    base_cmd.angular.z = ff[10]*vel[5];
+    if (ff.size() == 12) {
+        base_cmd.linear.x = base_cmd.linear.y = base_cmd.linear.z = 0;
+        base_cmd.angular.x = base_cmd.angular.y = base_cmd.angular.z = 0;
+        base_cmd.linear.x = ff[0]*vel[0] + ff[1]*vel[1];
+        base_cmd.linear.y = ff[4]*vel[0] + ff[5]*vel[1];
+        base_cmd.angular.z = ff[10]*vel[5];
+    }
     cmd_vel_pub_.publish(base_cmd);
+
+    // Grippers controller
+    const int r_gripper = 43;
+    const int l_gripper = 28;
+    pr2_controllers_msgs::Pr2GripperCommandGoal rgoal, lgoal;
+    rgoal.command.position = joint_control_[r_gripper];
+    rgoal.command.max_effort = -1.0;
+    lgoal.command.position = joint_control_[l_gripper];
+    lgoal.command.max_effort = -1.0;
+
+    r_gripper_client_->sendGoal(rgoal);
+    l_gripper_client_->sendGoal(lgoal);
 
     // State publishing
     if (loop_count_ % 10 == 0) {
@@ -200,21 +227,40 @@ Pr2ControllerPlugin::starting() {
     }
     catch (std::exception &e) { throw e; }
     readControl();
+
+    _iter = 0;
+    _mean = 0.;
 }
 
 void
 Pr2ControllerPlugin::update() {
+    //std::cout << "UPDATE" << std::endl;
     fillSensors();
+
+    struct timeval t0, t1;
+    gettimeofday(&t0,0);
+
     try {
         sot_controller_.nominalSetSensors(sensorsIn_);
         sot_controller_.getControl(controlValues_);
     }
     catch (std::exception &e) { throw e; }
+
+    gettimeofday(&t1, 0);
+    _mean += (t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec;
+    ++_iter;
+    if (_iter == 100) {
+        std::cout << "[Pr2ControllerPlugin] : " << _mean/_iter << " µs" << std::endl;
+        _iter = 0;
+        _mean = 0.;
+    }
+
     readControl();
 }
 
 void
 Pr2ControllerPlugin::stopping() {
+    std::cout << "STOPPING" << std::endl;
     fillSensors();
     try {
         sot_controller_.cleanupSetSensors(sensorsIn_);

@@ -54,8 +54,8 @@ Pr2Device::setSensors(SensorMap &sensorsIn) {
             state_(i+6) = anglesIn[i];
     }
     // RobotState
-    //mlRobotState.resize(anglesIn.size() + 6);
-    /*for (unsigned i=0; i<6; ++i)
+    /*mlRobotState.resize(anglesIn.size() + 6);
+    for (unsigned i=0; i<6; ++i)
         mlRobotState(i) = 0.;
     updateRobotState(anglesIn);*/
 
