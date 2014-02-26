@@ -1,4 +1,4 @@
-from numpy import eye, array
+from numpy import eye, array, diag
 from dynamic_graph import plug
 from dynamic_graph.sot.core import *
 from dynamic_graph.sot.dynamics import *
@@ -76,6 +76,27 @@ def Pr2ChestTask(robot):
     task=MetaTaskKine6d('chest',robot.dynamic,'chest','chest')
     task.feature.frame('desired')
     return task
+
+
+""" Create a task that aims at reducing the contribution of the some of the joints."""
+def Pr2Weight(robot):
+  # --- TASK POSTURE --------------------------------------------------
+  # set a default position for the joints.
+  feature = FeatureGeneric('feature_weight')
+  weight = 18 * (0,) + (500,)* 1 + (51-19) * (1,)
+  feature.jacobianIN.value = diag(weight)
+  feature.errorIN.value = 51 * (0,)
+
+  task=Task('weight')
+  task.add('feature_weight')
+
+  gainWeight = GainAdaptive('gain_weight')
+  gainWeight.set(0.1,0.1,125e3)
+  gainWeight.gain.value = 5
+  plug(task.error, gainWeight.error)
+  plug(gainWeight.gain, task.controlGain)
+
+  return (task, feature)
 
 def initPostureTask(robot):
   # --- TASK POSTURE --------------------------------------------------
@@ -170,4 +191,4 @@ def Pr2BaseTask(robot):
 __all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
             "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask",
             "initialize", "Pr2ChestTask",
-            "Pr2BaseTask", "initPostureTask"]
+            "Pr2BaseTask", "initPostureTask", "Pr2Weight"]
