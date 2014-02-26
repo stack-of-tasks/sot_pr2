@@ -247,5 +247,5 @@ def Pr2BaseTask(robot):
 __all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
             "Pr2FoVTask", "Pr2JointLimitsTask", "Pr2ContactTask", 
             "Pr2RightGripper", "Pr2LeftGripper", 
-            "initialize", "Pr2ChestTask",
+            "initialize", "Pr2ChestTask", "Pr2Weight",
             "Pr2BaseTask", "initPostureTask"]
