@@ -2,6 +2,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <geometry_msgs/Twist.h>
 
+
 namespace sot_pr2 {
 
 std::ofstream logout;
@@ -12,9 +13,17 @@ Pr2ControllerPlugin::Pr2ControllerPlugin()
       loop_count_(0),
       robot_(NULL) {
     logout.open("/tmp/out.log", std::ios::out);
+
+    // Grippers init
+    r_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("r_gripper_controller/gripper_action", true);
+    l_gripper_client_ = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("l_gripper_controller/gripper_action", true);
+    r_gripper_position = 0;
+    l_gripper_position = 0;
 }
 
 Pr2ControllerPlugin::~Pr2ControllerPlugin() {
+    delete r_gripper_client_;
+    delete l_gripper_client_;
 }
 
 bool
@@ -172,6 +181,18 @@ Pr2ControllerPlugin::readControl() {
         base_cmd.angular.z = ff[10]*vel[5];
     }
     cmd_vel_pub_.publish(base_cmd);
+
+    // Grippers controller
+    const int r_gripper = 43;
+    const int l_gripper = 28;
+    pr2_controllers_msgs::Pr2GripperCommandGoal rgoal, lgoal;
+    rgoal.command.position = joint_control_[r_gripper];
+    rgoal.command.max_effort = -1.0;
+    lgoal.command.position = joint_control_[l_gripper];
+    lgoal.command.max_effort = -1.0;
+
+    r_gripper_client_->sendGoal(rgoal);
+    l_gripper_client_->sendGoal(lgoal);
 
     // State publishing
     if (loop_count_ % 10 == 0) {

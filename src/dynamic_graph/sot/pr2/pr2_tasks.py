@@ -83,8 +83,8 @@ class Pr2Gripper:
     index: index of the first gripper value in the state vector
     dim: dimension of the gripper
     """ 
-    def __init__(self, name, robot, indexes):
-        dim=len(indexes)
+    def __init__(self, name, robot, index):
+        dim=1
         self.feature = FeatureGeneric('feature'+name)
         self.featureDes = FeatureGeneric('featureDes'+name)
         self.feature.setReference('featureDes'+name)
@@ -92,15 +92,11 @@ class Pr2Gripper:
         
         # create jacobian.
         jacobianGripper = eye(dim,robot.dimension) * 0;
-        position=0
-        for index in indexes:
-            jacobianGripper[position][index] = 1;
-            ++position
-            #    jacobianGripper[1][index+1] = 1;
+        jacobianGripper[0][index] = 1;
         self.feature.jacobianIN.value = jacobianGripper
             
         # only selec some dofs
-        selecRightGripper = Selec_of_vector('selecRightGripper')
+        selecRightGripper = Selec_of_vector('selec'+name)
         selecRightGripper.selec(index, index+dim)
         plug(robot.dynamic.position, selecRightGripper.sin)        
         plug(selecRightGripper.sout, self.feature.errorIN)
@@ -108,25 +104,28 @@ class Pr2Gripper:
         # 2\ Define the task. Associate to the task the position feature.
         self.task = Task('task'+name)
         self.task.add('feature'+name)
-        self.task.controlGain.value = 1
+        self.task.controlGain.value = 1000
         
-    def open(self):
-        pos = self.featureDes.errorIN.value
-        self.featureDes.errorIN.value=(pos[0], 0)
+    def open(self,gain=1000):
+        self.task.controlGain.value=gain
+        self.featureDes.errorIN.value=(0.08,)*1
             
-    def close(self):
-        pos = self.featureDes.errorIN.value
-        self.featureDes.errorIN.value=(pos[0], 1)
+    def close(self,gain=1000):
+        self.task.controlGain.value=gain
+        self.featureDes.errorIN.value=(0,)*1
 
-    def set(self, position):
-        initpos = self.featureDes.errorIN.value 
-        self.featureDes.errorIN.value = position
+    def set(self, position,gain=1000):
+        self.task.controlGain.value=gain
+        self.featureDes.errorIN.value = (position,)*1
 
 
 def Pr2RightGripper(robot):
-    gripper = Pr2Gripper('right-gripper', robot,[43])
+    gripper = Pr2Gripper('RightGripper', robot,49)
     return gripper
 
+def Pr2LeftGripper(robot):
+    gripper = Pr2Gripper('LeftGripper', robot,34)
+    return gripper
 
 # -- CHEST ------------------------------------------------------------------
 def Pr2ChestTask(robot):
@@ -142,8 +141,8 @@ def initPostureTask(robot):
   robotDim = len(robot.dynamic.velocity.value)
   robot.features['featurePosition'].posture.value = robot.halfSitting
 
-  postureTaskDofs = [True]*6 + [False]*(robot.dimension-6)
-  postureTaskDofs = [True]*(robot.dimension)
+  postureTaskDofs = [True]*6 + [False]*(51-6)
+  postureTaskDofs = [True]*(51)
 
   for dof,isEnabled in enumerate(postureTaskDofs):
     if dof > 6:
@@ -183,6 +182,22 @@ def Pr2FoVTask(robot,dt):
     task.featureDes.xy.value = (0,0)
     return task
     
+
+# -- JOINTS LIMITS  ---------------------------------------------------------
+
+def Pr2JointLimitsTask(robot,dt):
+    robot.dynamic.upperJl.recompute(0)
+    robot.dynamic.lowerJl.recompute(0)
+    task = TaskJointLimits('taskJL')
+    plug(robot.dynamic.position,task.position)
+    task.controlGain.value = 10
+    task.referenceInf.value = robot.dynamic.lowerJl.value
+    task.referenceSup.value = robot.dynamic.upperJl.value
+    task.dt.value = dt
+    task.selec.value = toFlags(range(18,25)+range(26,27)+range(28,31)+range(32,40)+range(41,42)+range(43,46)+range(47,50))
+    return task
+    
+
 # -- CONTACT  --------------------------------------------------------------- 
 
 def Pr2ContactTask(robot):
@@ -210,5 +225,5 @@ def Pr2BaseTask(robot):
     
 __all__ = ["Pr2RightHandTask", "Pr2LeftHandTask", "Pr2GazeTask",
             "Pr2FoVTask", "Pr2ContactTask", "Pr2RightGripper",
-            "initialize", "Pr2ChestTask",
+            "Pr2LeftGripper", "initialize", "Pr2ChestTask",
             "Pr2BaseTask", "initPostureTask"]

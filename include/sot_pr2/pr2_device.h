@@ -26,6 +26,7 @@ namespace sot_pr2 {
         void cleanupSetSensors(SensorMap &sensorsIn);
 
         void getControl(ControlMap &controlOut);
+        void getFakeControl(ControlMap &controlOut);
 
     protected:
         void updateRobotState(const std::vector<double> &anglesIn);

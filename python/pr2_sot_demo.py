@@ -33,6 +33,7 @@ runner=inc()
 # 3. Init Tasks
 taskRH = Pr2RightHandTask(robot)
 taskLH = Pr2LeftHandTask(robot)
+taskJL = Pr2JointLimitsTask(robot,dt)
 taskFov = Pr2FoVTask(robot,dt)
 taskBase = Pr2BaseTask(robot)
 taskChest = Pr2ChestTask(robot)

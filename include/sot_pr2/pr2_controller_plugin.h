@@ -9,6 +9,8 @@
 #include <realtime_tools/realtime_publisher.h>
 #include <control_msgs/JointTrajectoryControllerState.h>
 #include <tf/transform_listener.h>
+#include <actionlib/client/simple_action_client.h>
+#include <pr2_controllers_msgs/Pr2GripperCommandAction.h>
 
 namespace sot_pr2 {
 
@@ -48,6 +50,12 @@ private:
     std::vector<Pr2JointPtr> joints_;
     std::vector<control_toolbox::Pid> pids_;
     pr2_mechanism_model::RobotState *robot_;
+
+    // Gripper
+    actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction> *r_gripper_client_;
+    actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction> *l_gripper_client_;
+    double r_gripper_position;
+    double l_gripper_position;
 
     // ROS interface
     //ros::NodeHandle node_;

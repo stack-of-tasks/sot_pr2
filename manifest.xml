@@ -24,6 +24,8 @@
 
   <depend package="pr2_controller_interface"/>
   <depend package="pr2_mechanism_model"/>
+  <depend package="pr2_controllers_msgs"/>
+  <depend package="actionlib"/>
   <depend package="controller_interface"/>
   <depend package="controller_manager"/>
   <depend package="control_toolbox"/>
