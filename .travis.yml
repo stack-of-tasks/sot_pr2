@@ -1,0 +1,14 @@
+language: cpp
+compiler:
+- gcc
+matrix:
+notifications:
+  email:
+  - francois.keith@gmail.com
+branches:
+  only:
+  - master
+  - groovy
+script: ./.travis/build
+before_install: ./.travis/before_install
+after_success: ./.travis/after_success
