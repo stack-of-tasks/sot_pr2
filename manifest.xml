@@ -17,11 +17,6 @@
     <rosdoc config="rosdoc.yaml" />
   </export>
 
-  <rosdep name="dynamic-graph"/>
-  <rosdep name="dynamic-graph-python"/>
-  <rosdep name="sot-core"/>
-  <rosdep name="sot-dynamic"/>
-
   <depend package="pr2_controller_interface"/>
   <depend package="pr2_mechanism_model"/>
   <depend package="pr2_controllers_msgs"/>
