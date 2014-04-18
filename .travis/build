@@ -60,7 +60,7 @@ install_dependency stack-of-tasks/sot-core
 install_dependency stack-of-tasks/sot-tools
 install_dependency stack-of-tasks/sot-dynamic
 install_dependency laas/jrl_dynamics_urdf
-install_ros_stack stack-of-tasks/redundant_manipulator_control groovy
+install_ros_stack stack-of-tasks/redundant_manipulator_control
 
 cd "$root_dir"
 # build dependencies
