@@ -25,9 +25,16 @@ class Pr2(AbstractHumanoidRobot):
     """
 
     OperationalPoints = ['right-wrist','left-wrist','waist','gaze','chest','left-ankle']
-    
-    SpecialLinks  = ['BODY', 'l_wrist', 'r_wrist', 'l_gripper', 'r_gripper', 'gaze','torso','l_ankle']
-    SpecialNames = ['base_link', 'l_wrist_roll_link', 'r_wrist_roll_link', 'l_gripper_palm_link', 'r_gripper_palm_link', 'double_stereo_link','torso_lift_link','base_link']
+
+    jointMap={}
+    jointMap['BODY']      = 'base_link'
+    jointMap['l_wrist']   = 'l_gripper_palm_link'
+    jointMap['r_wrist']   = 'r_gripper_palm_link'
+    jointMap['l_gripper'] = 'l_gripper_tool_frame'
+    jointMap['r_gripper'] = 'r_gripper_tool_frame'
+    jointMap['gaze']      = 'double_stereo_link'
+    jointMap['torso']     = 'torso_lift_link'
+    jointMap['l_ankle']   = 'base_link' # TODO?
 
     tracedSignals = {
         'dynamic': ["com", "position", "velocity", "acceleration"],
@@ -35,20 +42,34 @@ class Pr2(AbstractHumanoidRobot):
         }
         
     def specifySpecialLinks(self):
-        if len(self.SpecialLinks) == len(self.SpecialNames):
-            for i in range(0,len(self.SpecialLinks)):
-                self.dynamic.addJointMapping(self.SpecialLinks[i], self.SpecialNames[i])
-        else:
-            print 'No Special joints added : SpecialLinks.size != SpecialJoints.size'
+        for i in self.jointMap:
+            self.dynamic.addJointMapping(i, self.jointMap[i])
 
     def __init__(self, name, device = None, tracer = None):
         AbstractHumanoidRobot.__init__ (self, name, tracer)
         self.device = device
         self.dynamic = RosRobotModel("{0}_dynamic".format(name))
         self.specifySpecialLinks()
+        #Note: the param 'robot_description' should be defined before the next instruction
         self.dynamic.loadFromParameterServer()
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = (0.,) * self.dimension
+        lst = list(self.halfSitting)
+        lst[24] = -0.33
+        lst[26] = -0.47
+        lst[39] = -0.33
+        lst[41] = -0.47
+        self.halfSitting = tuple(lst)
+
+        # correct the initialization of the dynamic.
+        self.dynamic.velocity.value = self.dimension*(0.,)
+        self.dynamic.acceleration.value = self.dimension*(0.,)
+        self.dynamic.ffposition.unplug()
+        self.dynamic.ffvelocity.unplug()
+        self.dynamic.ffacceleration.unplug()
+        self.dynamic.setProperty('ComputeBackwardDynamics','true')
+        self.dynamic.setProperty('ComputeAccelerationCoM','true')
+
         self.initializeRobot()
 
 __all__ = ["Pr2"]

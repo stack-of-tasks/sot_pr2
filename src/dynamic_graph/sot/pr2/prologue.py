@@ -15,33 +15,18 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-print("sot_pr2")
-print("Compiled for robot PR-2.")
+print("Prologue PR2")
 
-from dynamic_graph import plug
-from robot import Pr2
 from dynamic_graph.entity import PyEntityFactoryClass
+from dynamic_graph.sot.pr2.robot import Pr2
 
 Device = PyEntityFactoryClass('Pr2Device')
 
-robot = Pr2(name = 'robot', device = Device('robot_device'))
+robot = Pr2(name = 'robot', device = Device('PR2'))
 
-# FIXME: this must be set so that the graph can be evaluated.
-#robot.device.zmp.value = (0., 0., 0.)
+#todo: necessary?
+#plug(robot.device.state, robot.dynamic.position)
 
-# Create a solver.
-from dynamic_graph.sot.dyninv import SolverKine
-def toList(solver):
-    return map(lambda x: x[1:-1],solver.dispStack().split('|')[1:])
-SolverKine.toList = toList
-solver = SolverKine('sot')
-solver.setSize(robot.dimension)
-robot.device.control.unplug()
-plug(solver.control,robot.device.control)
-plug(robot.device.state,robot.dynamic.position)
-
-print("Prologue ran successfully.")
-
-# Make sure only robot and solver are visible from the outside.
-__all__ = ["robot", "solver"]
+# Make sure only robot is visible from the outside.
+__all__ = ["robot"]
 
