@@ -94,7 +94,7 @@ Pr2ControllerPlugin::init(pr2_mechanism_model::RobotState *robot, ros::NodeHandl
     listener_.waitForTransform("odom_combined", "base_footprint", ros::Time(0), ros::Duration(1.0));
 
     // Allocate space
-    const unsigned int jsz = joints_.size();
+    const std::size_t jsz = joints_.size();
     joint_encoder_.resize(jsz);
     joint_velocity_.resize(jsz);
     joint_control_.resize(jsz);
@@ -128,13 +128,13 @@ void
 Pr2ControllerPlugin::fillSensors() {
     // Joint values
     sensorsIn_["joints"].setName("position");
-    for (unsigned int i=0; i<joints_.size(); ++i)
+    for (std::size_t i=0; i<joints_.size(); ++i)
         joint_encoder_[i] = joints_[i]->position_;
     sensorsIn_["joints"].setValues(joint_encoder_);
 
     // Joint velocities
     sensorsIn_["velocities"].setName("velocity");
-    for (unsigned int i=0; i<joints_.size(); ++i)
+    for (std::size_t i=0; i<joints_.size(); ++i)
         joint_velocity_[i] = joints_[i]->velocity_;
     sensorsIn_["velocities"].setValues(joint_velocity_);
 
@@ -163,10 +163,11 @@ Pr2ControllerPlugin::readControl() {
     joint_control_ = controlValues_["joints"].getValues();
     joint_velocity_ = controlValues_["velocities"].getValues();
     // 0-11 are casters and are controled by base controller
-    for (unsigned int i=12; i<joints_.size(); ++i) {
+    for (std::size_t i=12; i<joints_.size(); ++i) {
         error[i] = joints_[i]->position_ - joint_control_[i];
         double errord = joints_[i]->velocity_ - joint_velocity_[i];
-        joints_[i]->commanded_effort_ += pids_[i].updatePid(error[i], errord, dt);
+        joints_[i]->commanded_effort_ += pids_[i].computeCommand
+	  (error[i], errord, dt);
     }
 
     // Base controller
@@ -247,7 +248,7 @@ Pr2ControllerPlugin::update() {
     catch (std::exception &e) { throw e; }
 
     gettimeofday(&t1, 0);
-    _mean += (t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec;
+    _mean += (double)((t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec);
     ++_iter;
     if (_iter == 100) {
         std::cout << "[Pr2ControllerPlugin] : " << _mean/_iter << " µs" << std::endl;

@@ -47,7 +47,7 @@ Pr2Device::setSensors(SensorMap &sensorsIn) {
     it = sensorsIn.find("joints");
     if (it != sensorsIn.end()) {
         const std::vector<double> &anglesIn = it->second.getValues();
-        state_.resize(anglesIn.size() + 6);
+        state_.resize((unsigned int)(anglesIn.size() + 6));
         for (unsigned i=0;i<6; ++i)
             state_(i) = 0.;
         for (unsigned i=0; i<anglesIn.size(); ++i)
@@ -63,7 +63,7 @@ Pr2Device::setSensors(SensorMap &sensorsIn) {
     it = sensorsIn.find("velocities");
     if (it != sensorsIn.end()) {
         const std::vector<double> &velIn = it->second.getValues();
-        velocity_.resize(velIn.size() + 6);
+        velocity_.resize((unsigned int)(velIn.size() + 6));
         for (unsigned i=0;i<6; ++i)
             velocity_(i) = 0.;
         for (unsigned i=0; i<velIn.size(); ++i)
