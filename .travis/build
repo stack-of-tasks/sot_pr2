@@ -36,19 +36,6 @@ install_dependency()
     make install
 }
 
-install_ros_stack()
-{
-    echo "--> Compiling $1"
-    mkdir -p "$build_dir/$1"
-    cd "$build_dir"
-    if [ "$#" -eq "2" ]; then
-      $git_clone "git://github.com/$1" "$1" -b $2
-    else
-      $git_clone "git://github.com/$1" "$1"
-    fi
-    export ROS_PACKAGE_PATH="$build_dir/$1:$ROS_PACKAGE_PATH"
-}
-
 # Retrieve jrl-mathtools
 install_dependency jrl-umi3218/jrl-mathtools
 install_dependency jrl-umi3218/jrl-mal
@@ -60,29 +47,6 @@ install_dependency stack-of-tasks/sot-core
 install_dependency stack-of-tasks/sot-tools
 install_dependency stack-of-tasks/sot-dynamic
 install_dependency laas/jrl_dynamics_urdf
-install_ros_stack stack-of-tasks/redundant_manipulator_control
-
-cd "$root_dir"
-# build dependencies
-rosdep install dynamic_graph_bridge_msgs
-rosmake dynamic_graph_bridge_msgs
-
-rosdep install dynamic_graph_bridge
-rosmake dynamic_graph_bridge
-cd "$build_dir"
-cd stack-of-tasks/redundant_manipulator_control/dynamic_graph_bridge/build
-cmake .. -DCMAKE_INSTALL_PREFIX:STRING="$install_dir"
-rosmake dynamic_graph_bridge
-make install
-
-
-# rosmake and install sot_pr2
-cd "$root_dir"
-export ROS_PACKAGE_PATH="$root_dir:$ROS_PACKAGE_PATH"
-rosdep install sot_pr2
-rosmake sot_pr2
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX:STRING="$install_dir"
-rosmake sot_pr2
-make install
-
+install_dependency dynamic_graph_bridge_msgs
+install_dependency dynamic_graph_bridge
+install_dependency sot_pr2

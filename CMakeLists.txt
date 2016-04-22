@@ -70,6 +70,41 @@ install(TARGETS sot_pr2_fake_controller DESTINATION ${CMAKE_INSTALL_LIBDIR})
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(python)
 
+# Install package.xml
 install(FILES package.xml DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
+# Install launch files
+install(FILES
+  launch/display.launch
+  launch/gazebo.launch
+  launch/pr2_empty_world.launch
+  launch/pr2_in_kitchen.launch
+  launch/sot_pr2.launch
+  launch/spawn_pr2.launch
+  launch/spawn_pr2_controller.launch
+  DESTINATION
+  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/launch
+  )
+# install pr2 models
+install(FILES
+  robots/pr2_light.srdf
+  robots/pr2_light.urdf.xacro
+  robots/upload_pr2.launch
+  DESTINATION
+  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/robots
+  )
+# install scripts
+install(PROGRAMS
+  scripts/robot_pose_publisher
+  DESTINATION
+  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/scripts
+  )
+# install config files
+install(FILES
+  config/pr2_sot_controller.yaml
+  config/rosdoc.yaml
+  config/sot_pr2.yaml
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/config
+  )
+
 SETUP_PROJECT_FINALIZE()

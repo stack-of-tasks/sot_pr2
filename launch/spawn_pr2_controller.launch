@@ -1,4 +1,4 @@
 <launch>
-    <rosparam file="$(find sot_pr2)/pr2_sot_controller.yaml" command="load" />
+    <rosparam file="$(find sot_pr2)/config/pr2_sot_controller.yaml" command="load" />
     <node pkg="pr2_controller_manager" type="spawner" args="sot_pr2" name="pr2_sot_controller_spawner" />
 </launch>
