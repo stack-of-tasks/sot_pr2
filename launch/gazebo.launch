@@ -1,7 +1,6 @@
 <launch>
     <include file="$(find sot_pr2)/launch/pr2_empty_world.launch">
 	<arg name="use_sim_time" value="true" />
-	<arg name="throttled" default="false"/>
         <arg name="physics" default="true"/>
     </include>
 
