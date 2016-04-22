@@ -21,7 +21,7 @@
     <rosdoc config="rosdoc.yaml" />
   </export>
 
-  <build_depend>pr2_controller_interface</build_depend>
+  <depend>pr2_controller_interface</depend>
   <build_depend>pr2_mechanism_model</build_depend>
   <build_depend>pr2_controllers_msgs</build_depend>
   <build_depend>control_toolbox</build_depend>

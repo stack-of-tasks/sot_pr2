@@ -46,7 +46,7 @@ set(HEADERS
     include/sot_pr2/pr2_sot_controller.h
     include/sot_pr2/pr2_device.h)
 
-add_library(sot_pr2 ${HEADERS} ${SOURCES})
+add_library(sot_pr2   SHARED ${HEADERS} ${SOURCES})
 
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "dynamic-graph")
 PKG_CONFIG_USE_DEPENDENCY(sot_pr2 "sot-core")
@@ -105,6 +105,11 @@ install(FILES
   config/rosdoc.yaml
   config/sot_pr2.yaml
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/config
+  )
+# install plugin description file
+install(FILES
+  controller_plugins.xml DESTINATION
+  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}
   )
 
 SETUP_PROJECT_FINALIZE()
