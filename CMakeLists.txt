@@ -103,7 +103,6 @@ install(PROGRAMS
 install(FILES
   config/pr2_sot_controller.yaml
   config/rosdoc.yaml
-  config/sot_pr2.yaml
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/config
   )
 # install plugin description file
