@@ -1,0 +1,33 @@
+<package>
+  <name>sot_pr2</name>
+  <version>1.0</version>
+  <description>
+
+    PR-2 real-time controller for dynamic-graph.
+
+    Gather dedicated dynamic-graph entities, humanoid robot python
+    classs definition and PR-2 real-time controller.
+
+  </description>
+  <maintainer email="hpp@laas.fr">hpp@laas.fr</maintainer>
+  <author email="hpp@laas.fr">Thomas Moulard François Keith Benjamin Coudrin
+  </author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/sot_pr2</url>
+
+  <export>
+    <pr2_controller_interface plugin="${prefix}/controller_plugins.xml" />
+    <rosdoc config="rosdoc.yaml" />
+  </export>
+
+  <depend>pr2_controller_interface</depend>
+  <build_depend>pr2_mechanism_model</build_depend>
+  <build_depend>pr2_controllers_msgs</build_depend>
+  <build_depend>control_toolbox</build_depend>
+  <build_depend>actionlib</build_depend>
+
+  <build_depend>urdf</build_depend>
+
+  <build_depend>dynamic_graph_bridge</build_depend>
+</package>

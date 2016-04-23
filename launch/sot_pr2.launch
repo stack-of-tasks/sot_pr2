@@ -2,7 +2,8 @@
      Start the sot_pr2 controller.
   -->
 <launch>
-   <rosparam file="$(find sot_pr2)/sot_pr2.yaml" command="load" />
+   <rosparam file="$(find sot_pr2)/config/pr2_sot_controller.yaml"
+	     command="load" />
 
    <node pkg="pr2_controller_manager" type="spawner"
 	 args="sot_pr2" name="sot_pr2_spawner" />
