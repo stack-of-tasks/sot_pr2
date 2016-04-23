@@ -82,6 +82,7 @@ install(FILES
   launch/sot_pr2.launch
   launch/spawn_pr2.launch
   launch/spawn_pr2_controller.launch
+  launch/upload_pr2.launch
   DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/launch
   )
@@ -89,7 +90,6 @@ install(FILES
 install(FILES
   robots/pr2_light.srdf
   robots/pr2_light.urdf.xacro
-  robots/upload_pr2.launch
   DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/robots
   )
@@ -103,7 +103,6 @@ install(PROGRAMS
 install(FILES
   config/pr2_sot_controller.yaml
   config/rosdoc.yaml
-  config/sot_pr2.yaml
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/config
   )
 # install plugin description file

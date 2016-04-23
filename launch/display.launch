@@ -1,5 +1,5 @@
 <launch>
-    <include file="$(find pr2_description)/robots/upload_pr2.launch"/>
+    <include file="$(find pr2_description)/launch/upload_pr2.launch"/>
 
     <arg name="gui" default="True" />
     <param name="use_gui" value="$(arg gui)"/>
