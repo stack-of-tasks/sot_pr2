@@ -13,7 +13,7 @@
   	</node>
 
 	<!-- Upload PR-2 to the parameter server -->	
-	<include file="$(find pr2_description)/robots/upload_pr2.launch"/>
+	<include file="$(find pr2_description)/launch/upload_pr2.launch"/>
 
 	<!-- Launch the kitchen -->
 	<include file="$(find iai_maps)/launch/kitchen_with_state_publisher.launch" />

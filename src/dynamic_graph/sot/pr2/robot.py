@@ -54,6 +54,8 @@ class Pr2(AbstractHumanoidRobot):
         self.dynamic.loadFromParameterServer()
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = (0.,) * self.dimension
+        if self.device:
+            self.device.control.value = self.dimension * (0.,)
         lst = list(self.halfSitting)
         lst[24] = -0.33
         lst[26] = -0.47
